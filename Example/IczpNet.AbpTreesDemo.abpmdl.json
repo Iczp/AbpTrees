@@ -1,0 +1,79 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {},
+      "host": {}
+    }
+  },
+  "packages": {
+    "IczpNet.AbpTreesDemo.Domain.Shared": {
+      "path": "src/IczpNet.AbpTreesDemo.Domain.Shared/IczpNet.AbpTreesDemo.Domain.Shared.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTreesDemo.Domain": {
+      "path": "src/IczpNet.AbpTreesDemo.Domain/IczpNet.AbpTreesDemo.Domain.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTreesDemo.Application.Contracts": {
+      "path": "src/IczpNet.AbpTreesDemo.Application.Contracts/IczpNet.AbpTreesDemo.Application.Contracts.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTreesDemo.Application": {
+      "path": "src/IczpNet.AbpTreesDemo.Application/IczpNet.AbpTreesDemo.Application.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTreesDemo.EntityFrameworkCore": {
+      "path": "src/IczpNet.AbpTreesDemo.EntityFrameworkCore/IczpNet.AbpTreesDemo.EntityFrameworkCore.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTreesDemo.MongoDB": {
+      "path": "src/IczpNet.AbpTreesDemo.MongoDB/IczpNet.AbpTreesDemo.MongoDB.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTreesDemo.HttpApi": {
+      "path": "src/IczpNet.AbpTreesDemo.HttpApi/IczpNet.AbpTreesDemo.HttpApi.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTreesDemo.HttpApi.Client": {
+      "path": "src/IczpNet.AbpTreesDemo.HttpApi.Client/IczpNet.AbpTreesDemo.HttpApi.Client.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTreesDemo.TestBase": {
+      "path": "test/IczpNet.AbpTreesDemo.TestBase/IczpNet.AbpTreesDemo.TestBase.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.AbpTreesDemo.EntityFrameworkCore.Tests": {
+      "path": "test/IczpNet.AbpTreesDemo.EntityFrameworkCore.Tests/IczpNet.AbpTreesDemo.EntityFrameworkCore.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.AbpTreesDemo.MongoDB.Tests": {
+      "path": "test/IczpNet.AbpTreesDemo.MongoDB.Tests/IczpNet.AbpTreesDemo.MongoDB.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.AbpTreesDemo.Domain.Tests": {
+      "path": "test/IczpNet.AbpTreesDemo.Domain.Tests/IczpNet.AbpTreesDemo.Domain.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.AbpTreesDemo.Application.Tests": {
+      "path": "test/IczpNet.AbpTreesDemo.Application.Tests/IczpNet.AbpTreesDemo.Application.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.AbpTreesDemo.HttpApi.Host": {
+      "path": "host/IczpNet.AbpTreesDemo.HttpApi.Host/IczpNet.AbpTreesDemo.HttpApi.Host.abppkg.json",
+      "folder": "host"
+    },
+    "IczpNet.AbpTreesDemo.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/IczpNet.AbpTreesDemo.HttpApi.Client.ConsoleTestApp/IczpNet.AbpTreesDemo.HttpApi.Client.ConsoleTestApp.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.AbpTreesDemo.AuthServer": {
+      "path": "host/IczpNet.AbpTreesDemo.AuthServer/IczpNet.AbpTreesDemo.AuthServer.abppkg.json",
+      "folder": "host"
+    },
+    "IczpNet.AbpTreesDemo.Host.Shared": {
+      "path": "host/IczpNet.AbpTreesDemo.Host.Shared/IczpNet.AbpTreesDemo.Host.Shared.abppkg.json",
+      "folder": "host"
+    }
+  }
+}

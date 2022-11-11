@@ -1,0 +1,27 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {},
+      "host": {}
+    }
+  },
+  "packages": {
+    "IczpNet.AbpTrees.Domain.Shared": {
+      "path": "src/IczpNet.AbpTrees.Domain.Shared/IczpNet.AbpTrees.Domain.Shared.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTrees.Domain": {
+      "path": "src/IczpNet.AbpTrees.Domain/IczpNet.AbpTrees.Domain.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTrees.Application.Contracts": {
+      "path": "src/IczpNet.AbpTrees.Application.Contracts/IczpNet.AbpTrees.Application.Contracts.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.AbpTrees.Application": {
+      "path": "src/IczpNet.AbpTrees.Application/IczpNet.AbpTrees.Application.abppkg.json",
+      "folder": "src"
+    }
+  }
+}

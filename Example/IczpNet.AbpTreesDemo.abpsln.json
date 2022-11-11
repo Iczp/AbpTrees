@@ -1,0 +1,7 @@
+{
+  "modules": {
+    "IczpNet.AbpTreesDemo": {
+      "path": "IczpNet.AbpTreesDemo.abpmdl.json"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>IczpNet.AbpTreesDemo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\IczpNet.AbpTreesDemo.Application\IczpNet.AbpTreesDemo.Application.csproj" />
+    <ProjectReference Include="..\IczpNet.AbpTreesDemo.Domain.Tests\IczpNet.AbpTreesDemo.Domain.Tests.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>IczpNet.AbpTreesDemo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="6.0.1" />
+    <ProjectReference Include="..\IczpNet.AbpTreesDemo.Domain\IczpNet.AbpTreesDemo.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

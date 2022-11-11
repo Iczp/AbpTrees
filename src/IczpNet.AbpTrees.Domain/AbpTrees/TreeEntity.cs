@@ -1,0 +1,189 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using Volo.Abp.Domain.Entities.Auditing;
+
+namespace IczpNet.AbpTrees
+{
+    public abstract class TreeEntity<T> : FullAuditedAggregateRoot<Guid>, ITreeEntity<T> where T : ITreeEntity
+    {
+        /// <summary>
+        /// 名称
+        /// </summary>
+        [StringLength(64)]
+        [Required(ErrorMessage = "名称不能为NUll")]
+        public virtual string Name { get; protected set; }
+
+        ///// <summary>
+        ///// 名称_拼音
+        ///// </summary>
+        //[StringLength(AbpTreeConsts.Name_PinyinMaxLength)]
+        //[MaxLength(AbpTreeConsts.Name_PinyinMaxLength)]
+        //// [Comment("名称_拼音")]
+        //public virtual string Name_Pinyin { get; protected set; }
+
+        ///// <summary>
+        ///// 名称_拼音
+        ///// </summary>
+        //[StringLength(AbpTreeConsts.Name_PYMaxLength)]
+        //[MaxLength(AbpTreeConsts.Name_PYMaxLength)]
+        //// [Comment("名称_拼音")]
+        //public virtual string Name_PY { get; protected set; }
+
+        /// <summary>
+        /// 父级Id
+        /// </summary>
+        // [Comment("父级Id")]
+        public virtual Guid? ParentId { get; protected set; }
+
+        /// <summary>
+        /// 全路径
+        /// </summary>
+        [MaxLength(1000)]
+        [Required]
+        // [Comment("全路径")]
+        public virtual string FullPath { get; protected set; }
+
+        /// <summary>
+        /// 全路径名称
+        /// </summary>
+        [MaxLength(1000)]
+        [Required]
+        // [Comment("全路径名称")]
+        public virtual string FullPathName { get; protected set; }
+
+        ///// <summary>
+        ///// 全路径拼音
+        ///// </summary>
+        //[MaxLength(1000)]
+        //[Required]
+        //// [Comment("全路径拼音")]
+        //public virtual string FullPathPinyin { get; protected set; }
+
+        /// <summary>
+        /// 层级
+        /// </summary>
+        [Range(0, 16)]
+        // [Comment("层级")]
+        public virtual int Depth { get; protected set; }
+
+        /// <summary>
+        /// 排序（越大越前面） DESC
+        /// </summary>
+        // [Comment("排序（越大越前面） DESC")]
+        public virtual long Sorting { get; set; }
+
+        /// <summary>
+        /// 说明
+        /// </summary>
+        [MaxLength(500)]
+        // [Comment("说明")]
+        public virtual string Description { get; set; }
+
+        /// <summary>
+        /// Spu总数量(包括所有子目录)
+        /// </summary>
+        [NotMapped]
+        public virtual int? SpuTotalCount { get; protected set; }
+
+        public int GetChildsCount()
+        {
+            return Childs.Count();
+        }
+
+        /// <summary>
+        /// 父级角色
+        /// </summary>
+        [ForeignKey(nameof(ParentId))]
+        public virtual T Parent { get; protected set; }
+
+        /// <summary>
+        /// 子集合
+        /// </summary>
+        public virtual IEnumerable<T> Childs { get; protected set; }
+
+        protected TreeEntity()
+        {
+
+        }
+
+        protected TreeEntity(Guid id, string name, Guid? parentId) : base(id)
+        {
+            FillCreate(id, name, parentId);
+        }
+
+        public virtual void FillCreate(Guid id, string name, Guid? parentId)
+        {
+            SetId(id);
+            SetParentId(parentId);
+            SetName(name);
+            SetFullPath(null);
+            SetFullPathName(null);
+            //SetFullPathPinyin(null);
+        }
+
+        internal void SetParentId(Guid? parentId)
+        {
+            ParentId = parentId;
+        }
+
+        internal virtual void SetId(Guid id)
+        {
+            Id = id;
+        }
+        internal virtual void SetName(string name)
+        {
+            Assert.NotNull(name, $"名称不能为Null");
+
+            Assert.If(name.Contains(AbpTreesConsts.SplitPath), $"名称不能包含\"/\"");
+
+            Name = name;
+
+            //Name_PY = name.ConvertToPY().MaxLength(300);
+
+            //Name_Pinyin = name.ConvertToPinyin().MaxLength(300);
+        }
+
+        internal virtual void SetFullPath(string parentPath)
+        {
+            FullPath = parentPath.IsNullOrEmpty() ? $"{Id}" : $"{parentPath}{AbpTreesConsts.SplitPath}{Id}";
+        }
+
+        internal virtual void SetFullPathName(string parentPathName)
+        {
+            FullPathName = parentPathName.IsNullOrEmpty() ? $"{Name}" : $"{parentPathName}{AbpTreesConsts.SplitPath}{Name}";
+        }
+
+        //internal virtual void SetFullPathPinyin(string parentPathPinyin)
+        //{
+        //    FullPathPinyin = parentPathPinyin.IsNullOrEmpty() ? $"{Name_PY}" : $"{parentPathPinyin}{AbpTreeConsts.SplitPath}{Name_PY}";
+        //}
+
+        internal virtual void SetDepth(int depth)
+        {
+            Depth = depth;
+        }
+
+
+        internal virtual void SetParent(T parent)
+        {
+            if (parent == null)
+            {
+                SetFullPath(null);
+                SetFullPathName(null);
+                //SetFullPathPinyin(null);
+                return;
+            }
+            Parent = parent;
+
+            Assert.If(Parent.Depth >= AbpTreesConsts.MaxDepth, $"超出最大层级:{AbpTreesConsts.MaxDepth}");
+
+            SetDepth(Parent.Depth + 1);
+            SetFullPath(parent.FullPath);
+            SetFullPathName(parent.FullPathName);
+            //SetFullPathPinyin(parent.FullPathPinyin);
+        }
+    }
+}
