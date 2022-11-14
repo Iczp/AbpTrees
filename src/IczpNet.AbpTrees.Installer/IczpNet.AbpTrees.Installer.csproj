@@ -10,7 +10,7 @@
 			<Authors>IczpNet</Authors>
 			<RepositoryUrl>https://github.com/Iczp/AbpTrees.git</RepositoryUrl>
 			<PackageProjectUrl>https://github.com/Iczp/AbpTrees.git</PackageProjectUrl>
-			<Version>0.1.0</Version>
+			<Version>0.1.1</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,6 +27,13 @@
         <Pack>True</Pack>
         <PackagePath>\</PackagePath>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="Fody" Version="6.6.4">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
 </Project>
