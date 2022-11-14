@@ -1,11 +1,7 @@
-﻿using IczpNet.AbpTrees;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp.AutoMapper;
 using Volo.Abp.Domain;
 using Volo.Abp.Modularity;
-using Volo.Abp;
-using Volo.Abp.AutoMapper;
-using Volo.Abp.Data;
-using Volo.Abp.DependencyInjection;
 
 namespace IczpNet.AbpTrees;
 
