@@ -9,7 +9,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
 			<Authors>IczpNet</Authors>
 			<RepositoryUrl>https://github.com/Iczp/AbpTrees.git</RepositoryUrl>
-			<PackageProjectUrl>https://github.com/Iczp</PackageProjectUrl>
+			<PackageProjectUrl>https://github.com/Iczp/AbpTrees.git</PackageProjectUrl>
 			<Version>0.1.0</Version>
     </PropertyGroup>
 
