@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using IczpNet.AbpTreesDemo.Departments;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 
 namespace IczpNet.AbpTreesDemo.EntityFrameworkCore;
 
@@ -29,5 +31,17 @@ public static class AbpTreesDemoDbContextModelCreatingExtensions
             b.HasIndex(q => q.CreationTime);
         });
         */
+
+        builder.Entity<Department>(b =>
+        {
+            //Configure table & schema name
+            b.ToTable(AbpTreesDemoDbProperties.DbTablePrefix + nameof(Department), AbpTreesDemoDbProperties.DbSchema);
+
+            b.ConfigureByConvention();
+
+            //Indexes
+            b.HasIndex(q => q.CreationTime);
+
+        });
     }
 }

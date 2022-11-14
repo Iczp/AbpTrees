@@ -10,8 +10,16 @@
   <ItemGroup>
     <PackageReference Include="Volo.Abp.AutoMapper" Version="6.0.1" />
     <PackageReference Include="Volo.Abp.Ddd.Application" Version="6.0.1" />
+    <ProjectReference Include="..\..\..\src\IczpNet.AbpTrees.Application\IczpNet.AbpTrees.Application.csproj" />
     <ProjectReference Include="..\IczpNet.AbpTreesDemo.Application.Contracts\IczpNet.AbpTreesDemo.Application.Contracts.csproj" />
     <ProjectReference Include="..\IczpNet.AbpTreesDemo.Domain\IczpNet.AbpTreesDemo.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Fody" Version="6.6.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

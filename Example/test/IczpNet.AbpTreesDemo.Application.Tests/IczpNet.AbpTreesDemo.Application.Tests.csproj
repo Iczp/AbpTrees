@@ -10,7 +10,14 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\IczpNet.AbpTreesDemo.Application\IczpNet.AbpTreesDemo.Application.csproj" />
     <ProjectReference Include="..\IczpNet.AbpTreesDemo.Domain.Tests\IczpNet.AbpTreesDemo.Domain.Tests.csproj" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Fody" Version="6.6.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

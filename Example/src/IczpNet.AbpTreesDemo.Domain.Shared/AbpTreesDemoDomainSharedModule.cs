@@ -5,12 +5,15 @@ using Volo.Abp.Localization.ExceptionHandling;
 using Volo.Abp.Validation;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
+using IczpNet.AbpTrees;
 
 namespace IczpNet.AbpTreesDemo;
 
 [DependsOn(
     typeof(AbpValidationModule)
 )]
+
+[DependsOn(typeof(AbpTreesDomainSharedModule))]
 public class AbpTreesDemoDomainSharedModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

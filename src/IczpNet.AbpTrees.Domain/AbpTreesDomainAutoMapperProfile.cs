@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using IczpNet.AbpTrees;
 
-namespace IczpNet.Invoicing;
+namespace IczpNet.AbpTreesDemo;
 
 public class AbpTreesDomainAutoMapperProfile : Profile
 {

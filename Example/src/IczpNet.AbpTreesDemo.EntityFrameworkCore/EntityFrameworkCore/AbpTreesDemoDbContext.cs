@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using IczpNet.AbpTreesDemo.Departments;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -16,6 +17,10 @@ public class AbpTreesDemoDbContext : AbpDbContext<AbpTreesDemoDbContext>, IAbpTr
     {
 
     }
+    /// <summary>
+    /// Department
+    /// </summary>
+    public DbSet<Department> Department { get; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

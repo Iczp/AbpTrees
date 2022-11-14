@@ -1,4 +1,5 @@
-﻿using Volo.Abp.Domain;
+﻿using IczpNet.AbpTrees;
+using Volo.Abp.Domain;
 using Volo.Abp.Modularity;
 
 namespace IczpNet.AbpTreesDemo;
@@ -7,6 +8,7 @@ namespace IczpNet.AbpTreesDemo;
     typeof(AbpDddDomainModule),
     typeof(AbpTreesDemoDomainSharedModule)
 )]
+[DependsOn(typeof(AbpTreesDomainModule))]
 public class AbpTreesDemoDomainModule : AbpModule
 {
 

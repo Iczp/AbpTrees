@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29001.49
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTreesDemo.Domain.Shared", "src\IczpNet.AbpTreesDemo.Domain.Shared\IczpNet.AbpTreesDemo.Domain.Shared.csproj", "{D64C1577-4929-4B60-939E-96DE1534891A}"
 EndProject
@@ -43,7 +43,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTreesDemo.AuthSe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTreesDemo.Host.Shared", "host\IczpNet.AbpTreesDemo.Host.Shared\IczpNet.AbpTreesDemo.Host.Shared.csproj", "{F6AC8D4A-EDD7-4514-8E8A-5BCB019864DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IczpNet.AbpTreesDemo.Installer", "src\IczpNet.AbpTreesDemo.Installer\IczpNet.AbpTreesDemo.Installer.csproj", "{BE39FD00-745B-4049-8161-FC129817CBE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTreesDemo.Installer", "src\IczpNet.AbpTreesDemo.Installer\IczpNet.AbpTreesDemo.Installer.csproj", "{BE39FD00-745B-4049-8161-FC129817CBE4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AbpTrees", "AbpTrees", "{7C20111E-6C5D-4F4C-9FFC-767D2B052497}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTrees.Application", "..\src\IczpNet.AbpTrees.Application\IczpNet.AbpTrees.Application.csproj", "{6BC4EE91-1F5A-4FEF-8170-E864A38AB3D6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTrees.Application.Contracts", "..\src\IczpNet.AbpTrees.Application.Contracts\IczpNet.AbpTrees.Application.Contracts.csproj", "{4B12DFE6-41E8-4FED-9AD3-4914C35D8E71}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTrees.Domain", "..\src\IczpNet.AbpTrees.Domain\IczpNet.AbpTrees.Domain.csproj", "{EE566382-A191-434A-A103-0800A1DAFF58}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTrees.Domain.Shared", "..\src\IczpNet.AbpTrees.Domain.Shared\IczpNet.AbpTrees.Domain.Shared.csproj", "{A7B806FD-75ED-4F4E-A89D-D7B03B872528}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -123,6 +133,22 @@ Global
 		{BE39FD00-745B-4049-8161-FC129817CBE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE39FD00-745B-4049-8161-FC129817CBE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE39FD00-745B-4049-8161-FC129817CBE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC4EE91-1F5A-4FEF-8170-E864A38AB3D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC4EE91-1F5A-4FEF-8170-E864A38AB3D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC4EE91-1F5A-4FEF-8170-E864A38AB3D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC4EE91-1F5A-4FEF-8170-E864A38AB3D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B12DFE6-41E8-4FED-9AD3-4914C35D8E71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B12DFE6-41E8-4FED-9AD3-4914C35D8E71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B12DFE6-41E8-4FED-9AD3-4914C35D8E71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B12DFE6-41E8-4FED-9AD3-4914C35D8E71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE566382-A191-434A-A103-0800A1DAFF58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE566382-A191-434A-A103-0800A1DAFF58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE566382-A191-434A-A103-0800A1DAFF58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE566382-A191-434A-A103-0800A1DAFF58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7B806FD-75ED-4F4E-A89D-D7B03B872528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7B806FD-75ED-4F4E-A89D-D7B03B872528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7B806FD-75ED-4F4E-A89D-D7B03B872528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7B806FD-75ED-4F4E-A89D-D7B03B872528}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -146,6 +172,10 @@ Global
 		{690203F4-3CD5-4569-88D9-EE831EEA5F5F} = {E400416D-2895-4512-9D17-90681EEC7E0A}
 		{F6AC8D4A-EDD7-4514-8E8A-5BCB019864DB} = {E400416D-2895-4512-9D17-90681EEC7E0A}
 		{BE39FD00-745B-4049-8161-FC129817CBE4} = {649A3FFA-182F-4E56-9717-E6A9A2BEC545}
+		{6BC4EE91-1F5A-4FEF-8170-E864A38AB3D6} = {7C20111E-6C5D-4F4C-9FFC-767D2B052497}
+		{4B12DFE6-41E8-4FED-9AD3-4914C35D8E71} = {7C20111E-6C5D-4F4C-9FFC-767D2B052497}
+		{EE566382-A191-434A-A103-0800A1DAFF58} = {7C20111E-6C5D-4F4C-9FFC-767D2B052497}
+		{A7B806FD-75ED-4F4E-A89D-D7B03B872528} = {7C20111E-6C5D-4F4C-9FFC-767D2B052497}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4324B3B4-B60B-4E3C-91D8-59576B4E26DD}

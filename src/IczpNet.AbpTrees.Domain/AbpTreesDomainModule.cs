@@ -13,6 +13,7 @@ namespace IczpNet.AbpTrees;
     typeof(AbpDddDomainModule),
     typeof(AbpTreesDomainSharedModule)
 )]
+
 public class AbpTreesDomainModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

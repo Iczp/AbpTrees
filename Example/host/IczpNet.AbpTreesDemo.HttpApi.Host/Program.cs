@@ -40,7 +40,15 @@ public class Program
         }
         catch (Exception ex)
         {
-            Log.Fatal(ex, "Host terminated unexpectedly!");
+            //Log.Fatal(ex, "Host terminated unexpectedly!");
+            //return 1;
+            string type = ex.GetType().Name;
+            if (type.Equals("StopTheHostException", StringComparison.Ordinal))
+            {
+                throw;
+            }
+
+            Log.Fatal(ex, "Unhandled exception");
             return 1;
         }
         finally
