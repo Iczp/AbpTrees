@@ -16,7 +16,9 @@ public class AbpTreesDemoApplicationAutoMapperProfile : Profile
         CreateMap<Department, DepartmentDto>(MemberList.Destination);
         CreateMap<Department, DepartmentWithParentDto>(MemberList.Destination);
         CreateMap<Department, DepartmentWithChildsDto>(MemberList.Destination)
-             .ForMember(s => s.ChildsCount, map => map.MapFrom(d => d.GetChildsCount()))
+            // MaxDepth
+            //.MaxDepth(depth: 3)
+            .ForMember(s => s.ChildsCount, map => map.MapFrom(d => d.GetChildsCount()))
              //.ForMember(s => s.UserCount, map => map.MapFrom(d => d.GetUserCount()))
              ;
         CreateMap<DepartmentCreateInput, Department>(MemberList.Source).IgnoreAllPropertiesWithAnInaccessibleSetter();
