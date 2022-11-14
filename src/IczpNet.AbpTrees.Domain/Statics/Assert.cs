@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
+﻿using System.Diagnostics;
 using Volo.Abp;
 
-namespace IczpNet.AbpTrees
+namespace IczpNet.AbpTrees.Statics
 {
     [DebuggerStepThrough]
     public static class Assert

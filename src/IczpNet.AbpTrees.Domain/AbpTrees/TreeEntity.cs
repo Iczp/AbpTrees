@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using IczpNet.AbpTrees.Statics;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace IczpNet.AbpTrees
@@ -82,13 +83,7 @@ namespace IczpNet.AbpTrees
         // [Comment("说明")]
         public virtual string Description { get; set; }
 
-        /// <summary>
-        /// Spu总数量(包括所有子目录)
-        /// </summary>
-        [NotMapped]
-        public virtual int? SpuTotalCount { get; protected set; }
-
-        public int GetChildsCount()
+        public virtual int GetChildsCount()
         {
             return Childs.Count();
         }
@@ -124,16 +119,16 @@ namespace IczpNet.AbpTrees
             //SetFullPathPinyin(null);
         }
 
-        internal void SetParentId(Guid? parentId)
+        protected virtual void SetParentId(Guid? parentId)
         {
             ParentId = parentId;
         }
 
-        internal virtual void SetId(Guid id)
+        protected virtual void SetId(Guid id)
         {
             Id = id;
         }
-        internal virtual void SetName(string name)
+        public virtual void SetName(string name)
         {
             Assert.NotNull(name, $"名称不能为Null");
 
@@ -161,13 +156,13 @@ namespace IczpNet.AbpTrees
         //    FullPathPinyin = parentPathPinyin.IsNullOrEmpty() ? $"{Name_PY}" : $"{parentPathPinyin}{AbpTreeConsts.SplitPath}{Name_PY}";
         //}
 
-        internal virtual void SetDepth(int depth)
+        protected virtual void SetDepth(int depth)
         {
             Depth = depth;
         }
 
 
-        internal virtual void SetParent(T parent)
+        public virtual void SetParent(T parent)
         {
             if (parent == null)
             {
