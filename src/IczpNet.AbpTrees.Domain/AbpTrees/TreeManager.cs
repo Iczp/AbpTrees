@@ -25,7 +25,7 @@ namespace IczpNet.AbpTrees
     //    }
     //}
     public class TreeManager<T, TOutput, TWithChildsOuput> : TreeManager<T, TOutput>, ITreeManager<T, TOutput, TWithChildsOuput>
-        where T : TreeEntity<T>, new()
+        where T : TreeEntity<T>
         where TOutput : class, ITreeInfo
         where TWithChildsOuput : class, ITreeWithChildsInfo<TWithChildsOuput>
     {
@@ -72,7 +72,7 @@ namespace IczpNet.AbpTrees
     }
 
     public class TreeManager<T, TOutput> : TreeManager<T>, ITreeManager<T, TOutput>
-        where T : TreeEntity<T>, new()
+        where T : TreeEntity<T>
         where TOutput : class, ITreeInfo
     {
         
@@ -105,7 +105,7 @@ namespace IczpNet.AbpTrees
 
 
     public class TreeManager<T> : DomainService, ITreeManager<T>
-        where T : TreeEntity<T>, new()
+        where T : TreeEntity<T>
     {
         public virtual string CacheKey => typeof(T).FullName;
         public IRepository<T, Guid> Repository { get; }
