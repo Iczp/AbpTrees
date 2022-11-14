@@ -245,7 +245,7 @@ public class DepartmentGetAllListWithChildsInput
 
 4. `DepartmentGetListInput.cs`
 
-```
+```C#
 using IczpNet.AbpTrees;
 using System;
 using System.ComponentModel;
@@ -463,8 +463,8 @@ public class AbpTreesDemoApplicationAutoMapperProfile : Profile
 
 3. Add Controller `AbpTreesDemoHttpApiHostModule.cs`
 
-   ```
-   ...
+   ```C#
+   //...
    public override void ConfigureServices(ServiceConfigurationContext context)
    {
    //...
@@ -477,7 +477,7 @@ public class AbpTreesDemoApplicationAutoMapperProfile : Profile
      //...
    }
            
-   ...
+   //...
    ```
 
    
