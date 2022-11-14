@@ -13,7 +13,7 @@ namespace IczpNet.AbpTrees
         /// <summary>
         /// 名称
         /// </summary>
-        [StringLength(64)]
+        [MaxLength(64)]
         [Required(ErrorMessage = "名称不能为NUll")]
         public virtual string Name { get; protected set; }
 
