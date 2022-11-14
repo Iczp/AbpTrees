@@ -141,12 +141,12 @@ namespace IczpNet.AbpTrees
             //Name_Pinyin = name.ConvertToPinyin().MaxLength(300);
         }
 
-        internal virtual void SetFullPath(string parentPath)
+        public virtual void SetFullPath(string parentPath)
         {
             FullPath = parentPath.IsNullOrEmpty() ? $"{Id}" : $"{parentPath}{AbpTreesConsts.SplitPath}{Id}";
         }
 
-        internal virtual void SetFullPathName(string parentPathName)
+        public virtual void SetFullPathName(string parentPathName)
         {
             FullPathName = parentPathName.IsNullOrEmpty() ? $"{Name}" : $"{parentPathName}{AbpTreesConsts.SplitPath}{Name}";
         }
