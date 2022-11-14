@@ -111,6 +111,18 @@ namespace IczpNet.AbpTrees
             return query.OrderByDescending(x => x.Sorting);
         }
 
+        [HttpGet]
+        public override Task<TGetOutputDto> GetAsync(Guid id)
+        {
+            return base.GetAsync(id);
+        }
+
+        [HttpGet]
+        public override Task<PagedResultDto<TGetListOutputDto>> GetListAsync(TGetListInput input)
+        {
+            return base.GetListAsync(input);
+        }
+
         protected override async Task<IQueryable<TEntity>> CreateFilteredQueryAsync(TGetListInput input)
         {
             Assert.If(!input.IsEnabledParentId && input.ParentId != null, "When [IsEnabledParentId]=false,then [ParentId] != null");
