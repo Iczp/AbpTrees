@@ -31,6 +31,7 @@ namespace IczpNet.AbpTrees
 
     public interface ITreeManager<T> : IDomainService where T : ITreeEntity<T>
     {
+        Task RemoveCacheAsync();
         /// <summary>
         /// 查找当前目录及所有子目录
         /// </summary>

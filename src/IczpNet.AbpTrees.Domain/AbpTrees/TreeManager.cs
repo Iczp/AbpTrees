@@ -74,13 +74,13 @@ namespace IczpNet.AbpTrees
         where T : TreeEntity<T>, new()
         where TOutput : class, ITreeInfo
     {
-        public virtual string CacheKey => typeof(T).FullName;
+        
         protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetRequiredService<IObjectMapper>();
         protected IDistributedCache<List<TOutput>> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<List<TOutput>>>();
 
         public TreeManager(IRepository<T, Guid> repository) : base(repository) { }
 
-        protected override Task RemoveCacheAsync()
+        public override Task RemoveCacheAsync()
         {
             return Cache.RemoveAsync(CacheKey);
         }
@@ -106,6 +106,7 @@ namespace IczpNet.AbpTrees
     public class TreeManager<T> : DomainService, ITreeManager<T>
         where T : TreeEntity<T>, new()
     {
+        public virtual string CacheKey => typeof(T).FullName;
         public IRepository<T, Guid> Repository { get; }
         public TreeManager(IRepository<T, Guid> repository)
         {
@@ -151,7 +152,7 @@ namespace IczpNet.AbpTrees
             return QueryCurrentAndAllChildsAsync(new List<Guid>() { departmentId });
         }
 
-        protected virtual Task RemoveCacheAsync()
+        public virtual Task RemoveCacheAsync()
         {
             //return Cache.RemoveAsync(CacheKey);
             return Task.CompletedTask;
