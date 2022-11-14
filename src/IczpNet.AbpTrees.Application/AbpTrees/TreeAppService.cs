@@ -11,24 +11,46 @@ using Volo.Abp.Domain.Repositories;
 
 namespace IczpNet.AbpTrees
 {
-    public abstract class TreeAppService<TEntity, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto>
-        : TreeAppService<TEntity, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo, TTreeWithChildsDto>
-        , ITreeAppService<TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto>
-            where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
-            where TGetOutputDto : IEntityDto<Guid>
-            where TGetListOutputDto : IEntityDto<Guid>
-            where TGetListInput : ITreeGetListInput
-            where TCreateInput : ITreeInput
-            where TUpdateInput : ITreeInput
-            where TTreeInfo : ITreeInfo
-            where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
-            where TTreeWithParentDto : ITreeWithParentInfo<TTreeWithParentDto>
+    public abstract class TreeAppService<
+        TEntity, 
+        TGetOutputDto, 
+        TGetListOutputDto, 
+        TGetListInput, 
+        TCreateInput, 
+        TUpdateInput, 
+        TTreeInfo, 
+        TTreeWithChildsDto, 
+        TTreeWithParentDto>
+        : 
+        TreeAppService<
+            TEntity, 
+            TGetOutputDto, 
+            TGetListOutputDto, 
+            TGetListInput, 
+            TCreateInput, 
+            TUpdateInput, 
+            TTreeInfo, 
+            TTreeWithChildsDto>
+        , 
+        ITreeAppService<
+        TTreeInfo, 
+        TTreeWithChildsDto, 
+        TTreeWithParentDto>
+        where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
+        where TGetOutputDto : IEntityDto<Guid>
+        where TGetListOutputDto : IEntityDto<Guid>
+        where TGetListInput : ITreeGetListInput
+        where TCreateInput : ITreeInput
+        where TUpdateInput : ITreeInput
+        where TTreeInfo : ITreeInfo
+        where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
+        where TTreeWithParentDto : ITreeWithParentInfo<TTreeWithParentDto>
     {
         //protected override ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto> TreeManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto>>();
         protected TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
 
         [HttpGet]
-        public async Task<TTreeWithParentDto> GetWithParentAsync(Guid id)
+        public virtual async Task<TTreeWithParentDto> GetWithParentAsync(Guid id)
         {
             await CheckGetPolicyAsync();
 
@@ -37,53 +59,87 @@ namespace IczpNet.AbpTrees
             return ObjectMapper.Map<TEntity, TTreeWithParentDto>(entity);
         }
     }
-    public abstract class TreeAppService<TEntity, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo, TTreeWithChildsDto>
-        : TreeAppService<TEntity, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo>
-        , ITreeAppService<TTreeInfo, TTreeWithChildsDto>
-            where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
-            where TGetOutputDto : IEntityDto<Guid>
-            where TGetListOutputDto : IEntityDto<Guid>
-            where TGetListInput : ITreeGetListInput
-            where TCreateInput : ITreeInput
-            where TUpdateInput : ITreeInput
-            where TTreeInfo : ITreeInfo
-            where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
+    public abstract class TreeAppService<
+        TEntity, 
+        TGetOutputDto, 
+        TGetListOutputDto, 
+        TGetListInput, 
+        TCreateInput, 
+        TUpdateInput, 
+        TTreeInfo, 
+        TTreeWithChildsDto>
+        : 
+        TreeAppService<
+            TEntity, 
+            TGetOutputDto, 
+            TGetListOutputDto, 
+            TGetListInput, 
+            TCreateInput, 
+            TUpdateInput, 
+            TTreeInfo>
+        , 
+        ITreeAppService<
+        TTreeInfo, 
+        TTreeWithChildsDto>
+        where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
+        where TGetOutputDto : IEntityDto<Guid>
+        where TGetListOutputDto : IEntityDto<Guid>
+        where TGetListInput : ITreeGetListInput
+        where TCreateInput : ITreeInput
+        where TUpdateInput : ITreeInput
+        where TTreeInfo : ITreeInfo
+        where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
     {
         protected  ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto> TreeWithChildsManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto>>();
         protected TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
 
         [HttpGet]
-        public async Task<List<TTreeWithChildsDto>> GetAllListWithChildsAsync(Guid? ParentId, bool IsImportAllChilds)
+        public virtual async Task<List<TTreeWithChildsDto>> GetAllListWithChildsAsync(Guid? ParentId, bool IsImportAllChilds)
         {
             await CheckGetListPolicyAsync();
 
             return await TreeWithChildsManager.GetAllListWithChildsAsync(ParentId, IsImportAllChilds);
         }
         [HttpGet]
-        public async Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> input)
+        public virtual async Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> input)
         {
             await CheckGetPolicyAsync();
 
             return await TreeWithChildsManager.GetRootListAsync(input);
         }
     }
-    public abstract class TreeAppService<TEntity, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo>
-        : TreeAppService<TEntity, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput>
-        , ITreeAppService<TTreeInfo>
-            where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
-            where TGetOutputDto : IEntityDto<Guid>
-            where TGetListOutputDto : IEntityDto<Guid>
-            where TGetListInput : ITreeGetListInput
-            where TCreateInput : ITreeInput
-            where TUpdateInput : ITreeInput
-            where TTreeInfo : ITreeInfo
+    public abstract class TreeAppService<
+        TEntity, 
+        TGetOutputDto, 
+        TGetListOutputDto, 
+        TGetListInput, 
+        TCreateInput, 
+        TUpdateInput, 
+        TTreeInfo>
+        : 
+        TreeAppService<
+            TEntity, 
+            TGetOutputDto, 
+            TGetListOutputDto, 
+            TGetListInput, 
+            TCreateInput, 
+            TUpdateInput>
+        , 
+        ITreeAppService<TTreeInfo>
+        where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
+        where TGetOutputDto : IEntityDto<Guid>
+        where TGetListOutputDto : IEntityDto<Guid>
+        where TGetListInput : ITreeGetListInput
+        where TCreateInput : ITreeInput
+        where TUpdateInput : ITreeInput
+        where TTreeInfo : ITreeInfo
     {
         protected  ITreeManager<TEntity, TTreeInfo> TreeCacheManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TTreeInfo>>();
         protected TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
 
 
         [HttpGet]
-        public async Task<List<TTreeInfo>> GeAllListByCacheAsync()
+        public virtual async Task<List<TTreeInfo>> GeAllListByCacheAsync()
         {
             await CheckGetListPolicyAsync();
 
@@ -92,8 +148,22 @@ namespace IczpNet.AbpTrees
     }
 
 
-    public abstract class TreeAppService<TEntity, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput>
-        : CrudAppService<TEntity, TGetOutputDto, TGetListOutputDto, Guid, TGetListInput, TCreateInput, TUpdateInput>
+    public abstract class TreeAppService<
+        TEntity, 
+        TGetOutputDto, 
+        TGetListOutputDto, 
+        TGetListInput, 
+        TCreateInput, 
+        TUpdateInput>
+        : 
+        CrudAppService<
+            TEntity, 
+            TGetOutputDto, 
+            TGetListOutputDto, 
+            Guid, 
+            TGetListInput, 
+            TCreateInput, 
+            TUpdateInput>
         //:ITreeAppService<TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto>
     where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
     where TGetOutputDto : IEntityDto<Guid>
