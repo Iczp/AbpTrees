@@ -6,7 +6,19 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>IczpNet.AbpTrees</RootNamespace>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+		<Authors>IczpNet</Authors>
+		<RepositoryUrl>https://github.com/Iczp/AbpTrees.git</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/Iczp</PackageProjectUrl>
+		<Version>0.1.0</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Volo.Abp.Validation" Version="6.0.1" />

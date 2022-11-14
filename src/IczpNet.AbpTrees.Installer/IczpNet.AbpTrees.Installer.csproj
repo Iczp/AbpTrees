@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <Import Project="..\..\common.props" />
 
@@ -6,6 +6,11 @@
         <TargetFramework>net6.0</TargetFramework>
         <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
         <RootNamespace>IczpNet.AbpTrees</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+			<Authors>IczpNet</Authors>
+			<RepositoryUrl>https://github.com/Iczp/AbpTrees.git</RepositoryUrl>
+			<PackageProjectUrl>https://github.com/Iczp</PackageProjectUrl>
+			<Version>0.1.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,6 +20,13 @@
     <ItemGroup>
       <None Remove="..\..\IczpNet.AbpTrees.abpmdl.json" />
       <EmbeddedResource Include="..\..\IczpNet.AbpTrees.abpmdl.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
     </ItemGroup>
 
 </Project>

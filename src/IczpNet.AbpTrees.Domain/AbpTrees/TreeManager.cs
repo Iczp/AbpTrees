@@ -30,7 +30,7 @@ namespace IczpNet.AbpTrees
     {
         public TreeManager(IRepository<T, Guid> repository) : base(repository) { }
 
-        protected override Task RemoveCacheAsync()
+        public override Task RemoveCacheAsync()
         {
             return Cache.RemoveAsync(CacheKey);
         }
