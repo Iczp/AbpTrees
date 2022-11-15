@@ -4,7 +4,12 @@ using System.Threading.Tasks;
 
 namespace IczpNet.AbpTrees
 {
-    public interface ITreeAppService<TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto> : ITreeAppService<TTreeInfo, TTreeWithChildsDto>
+    public interface ITreeAppService<
+        TTreeInfo,
+        TTreeWithChildsDto,
+        TTreeWithParentDto>
+        :
+        ITreeAppService<TTreeInfo, TTreeWithChildsDto>
         where TTreeInfo : ITreeInfo
         where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
         where TTreeWithParentDto : ITreeWithParentInfo<TTreeWithParentDto>
@@ -12,7 +17,11 @@ namespace IczpNet.AbpTrees
         Task<TTreeWithParentDto> GetWithParentAsync(Guid id);
     }
 
-    public interface ITreeAppService<TTreeInfo, TTreeWithChildsDto> : ITreeAppService<TTreeInfo>
+    public interface ITreeAppService<
+        TTreeInfo,
+        TTreeWithChildsDto>
+        :
+        ITreeAppService<TTreeInfo>
         where TTreeInfo : ITreeInfo
         where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
     {
@@ -20,9 +29,14 @@ namespace IczpNet.AbpTrees
         Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> input);
     }
 
-    public interface ITreeAppService<TTreeInfo>
+    public interface ITreeAppService<TTreeInfo> : ITreeAppService
         where TTreeInfo : ITreeInfo
     {
         Task<List<TTreeInfo>> GeAllListByCacheAsync();
+    }
+
+    public interface ITreeAppService
+    {
+
     }
 }
