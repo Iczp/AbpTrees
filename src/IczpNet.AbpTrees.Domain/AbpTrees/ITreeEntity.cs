@@ -60,7 +60,7 @@ namespace IczpNet.AbpTrees
         /// <summary>
         /// 排序（越大越前面） DESC
         /// </summary>
-        long Sorting { get; set; }
+        double Sorting { get; set; }
 
         /// <summary>
         /// 说明

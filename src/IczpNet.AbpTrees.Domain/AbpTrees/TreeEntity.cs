@@ -74,7 +74,7 @@ namespace IczpNet.AbpTrees
         /// 排序（越大越前面） DESC
         /// </summary>
         // [Comment("排序（越大越前面） DESC")]
-        public virtual long Sorting { get; set; }
+        public virtual double Sorting { get; set; }
 
         /// <summary>
         /// 说明
