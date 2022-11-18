@@ -26,7 +26,7 @@ namespace IczpNet.AbpTrees
         where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
     {
         Task<List<TTreeWithChildsDto>> GetAllListWithChildsAsync(Guid? ParentId, bool IsImportAllChilds);
-        Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> input);
+        Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> idList);
     }
 
     public interface ITreeAppService<TTreeInfo> : ITreeAppService

@@ -101,11 +101,11 @@ namespace IczpNet.AbpTrees
             return await TreeWithChildsManager.GetAllListWithChildsAsync(ParentId, IsImportAllChilds);
         }
         [HttpGet]
-        public virtual async Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> input)
+        public virtual async Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> idList)
         {
             await CheckGetPolicyAsync();
 
-            return await TreeWithChildsManager.GetRootListAsync(input);
+            return await TreeWithChildsManager.GetRootListAsync(idList);
         }
     }
     public abstract class TreeAppService<
