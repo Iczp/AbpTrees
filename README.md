@@ -1479,4 +1479,47 @@ public class AbpTreesDemoApplicationAutoMapperProfile : Profile
 
    
 
-   
+## Run
+
+   1. Set as Startup Project:`IczpNet.AbpTreesDemo.HttpApi.Host`
+
+   2. ConnectionStrings:`appsettings.json`
+
+      ```json
+      {
+        "App": {
+          "CorsOrigins": "https://*.AbpTreesDemo.com,http://localhost:4200,http://localhost:44307,https://localhost:44307"
+        },
+        "ConnectionStrings": {
+          "Default": "Server=localhost;Initial Catalog=AbpTreesDemo_Main;User ID=sa;Password=123",
+          "AbpTreesDemo": "Server=localhost;Initial Catalog=AbpTreesDemo_Module;User ID=sa;Password=123"
+        },
+        "Redis": {
+          "Configuration": "127.0.0.1"
+        },
+        "AuthServer": {
+          "Authority": "https://localhost:44362/",
+          "RequireHttpsMetadata": "false",
+          "SwaggerClientId": "AbpTreesDemo_Swagger",
+          "SwaggerClientSecret": "1q2w3e*"
+        }
+      }
+      
+      ```
+
+      
+
+   3. Set PM(Package Management Console) default Project:`IczpNet.AbpTreesDemo.HttpApi.Host`
+
+   4. add-migration and update database
+
+      ```
+      PM> Add-Migration Department_Init
+      ```
+
+      ```
+      PM> Update-Database
+      ```
+
+      
+
