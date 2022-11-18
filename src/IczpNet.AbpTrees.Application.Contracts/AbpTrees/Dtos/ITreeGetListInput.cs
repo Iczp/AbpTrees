@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IczpNet.AbpTrees
+namespace IczpNet.AbpTrees.Dtos
 {
     public interface ITreeGetListInput
     {

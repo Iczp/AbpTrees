@@ -3,7 +3,7 @@
 //using Volo.Abp.Domain.Services;
 //using Volo.Abp.EventBus;
 
-//namespace IczpNet.AbpTrees.AbpTrees
+//namespace IczpNet.AbpTrees
 //{
 //    public abstract class DeleteTreeCacheHander<TEntity, TTreeOutput> : DomainService, ILocalEventHandler<DeleteTreeCacheEto>, ITransientDependency
 //        where TEntity : ITreeEntity<TEntity>
