@@ -38,7 +38,7 @@ namespace IczpNet.AbpTrees
 
         public virtual async Task<List<TWithChildsOuput>> GetAllListWithChildsAsync(Guid? parentId, bool isImportAllChilds = false)
         {
-            var allList = await GeAllListByCacheAsync();
+            var allList = await GetAllListByCacheAsync();
 
             return await GetChildsAsync(allList, parentId, isImportAllChilds);
         }
@@ -86,7 +86,7 @@ namespace IczpNet.AbpTrees
             return Cache.RemoveAsync(CacheKey);
         }
 
-        public virtual Task<List<TOutput>> GeAllListByCacheAsync()
+        public virtual Task<List<TOutput>> GetAllListByCacheAsync()
         {
             return Cache.GetOrAddAsync(CacheKey, async () =>
             {

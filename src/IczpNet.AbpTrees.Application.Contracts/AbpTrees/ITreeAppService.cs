@@ -32,7 +32,7 @@ namespace IczpNet.AbpTrees
     public interface ITreeAppService<TTreeInfo> : ITreeAppService
         where TTreeInfo : ITreeInfo
     {
-        Task<List<TTreeInfo>> GeAllListByCacheAsync();
+        Task<List<TTreeInfo>> GetAllListByCacheAsync();
     }
 
     public interface ITreeAppService

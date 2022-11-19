@@ -139,11 +139,11 @@ namespace IczpNet.AbpTrees
 
 
         [HttpGet]
-        public virtual async Task<List<TTreeInfo>> GeAllListByCacheAsync()
+        public virtual async Task<List<TTreeInfo>> GetAllListByCacheAsync()
         {
             await CheckGetListPolicyAsync();
 
-            return await TreeCacheManager.GeAllListByCacheAsync();
+            return await TreeCacheManager.GetAllListByCacheAsync();
         }
     }
 

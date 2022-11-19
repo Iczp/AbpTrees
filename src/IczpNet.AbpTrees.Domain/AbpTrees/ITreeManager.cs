@@ -26,7 +26,7 @@ namespace IczpNet.AbpTrees
         where T : ITreeEntity<T>
         where TTreeOutput : ITreeInfo
     {
-        Task<List<TTreeOutput>> GeAllListByCacheAsync();
+        Task<List<TTreeOutput>> GetAllListByCacheAsync();
     }
 
     public interface ITreeManager<T> : IDomainService where T : ITreeEntity<T>
