@@ -10,6 +10,7 @@ namespace IczpNet.AbpTrees
         T Parent { get; }
         IEnumerable<T> Childs { get; }
         void FillCreate(Guid id,string name, Guid? parentId);
+        void FillUpdate(string name, Guid? parentId);
         //void SetParent(T parent);
         //void SetId(Guid id);
     }
@@ -21,16 +22,6 @@ namespace IczpNet.AbpTrees
         /// 名称
         /// </summary>
         string Name { get; }
-
-        ///// <summary>
-        ///// 名称_拼音
-        ///// </summary>
-        //string Name_Pinyin { get; }
-
-        ///// <summary>
-        ///// 名称_拼音
-        ///// </summary>
-        //string Name_PY { get; }
 
         /// <summary>
         /// 父级Id
@@ -46,11 +37,6 @@ namespace IczpNet.AbpTrees
         /// 全路径名称
         /// </summary>
         string FullPathName { get; }
-
-        ///// <summary>
-        ///// 全路径拼音
-        ///// </summary>
-        //string FullPathPinyin { get; }
 
         /// <summary>
         /// 层级

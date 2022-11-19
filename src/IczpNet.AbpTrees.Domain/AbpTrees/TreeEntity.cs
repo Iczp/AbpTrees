@@ -37,7 +37,7 @@ namespace IczpNet.AbpTrees
         /// 父级Id
         /// </summary>
         // [Comment("父级Id")]
-        public virtual Guid? ParentId { get; protected set; }
+        public virtual Guid? ParentId { get; set; }
 
         /// <summary>
         /// 全路径
@@ -116,9 +116,13 @@ namespace IczpNet.AbpTrees
             SetName(name);
             SetFullPath(null);
             SetFullPathName(null);
-            //SetFullPathPinyin(null);
         }
 
+        public void FillUpdate(string name, Guid? parentId)
+        {
+            SetParentId(parentId);
+            SetName(name);
+        }
         protected virtual void SetParentId(Guid? parentId)
         {
             ParentId = parentId;
@@ -130,15 +134,7 @@ namespace IczpNet.AbpTrees
         }
         public virtual void SetName(string name)
         {
-            Assert.NotNull(name, $"名称不能为Null");
-
-            Assert.If(name.Contains(AbpTreesConsts.SplitPath), $"名称不能包含\"/\"");
-
             Name = name;
-
-            //Name_PY = name.ConvertToPY().MaxLength(300);
-
-            //Name_Pinyin = name.ConvertToPinyin().MaxLength(300);
         }
 
         public virtual void SetFullPath(string parentPath)
@@ -150,11 +146,6 @@ namespace IczpNet.AbpTrees
         {
             FullPathName = parentPathName.IsNullOrEmpty() ? $"{Name}" : $"{parentPathName}{AbpTreesConsts.SplitPath}{Name}";
         }
-
-        //internal virtual void SetFullPathPinyin(string parentPathPinyin)
-        //{
-        //    FullPathPinyin = parentPathPinyin.IsNullOrEmpty() ? $"{Name_PY}" : $"{parentPathPinyin}{AbpTreeConsts.SplitPath}{Name_PY}";
-        //}
 
         protected virtual void SetDepth(int depth)
         {
@@ -178,7 +169,8 @@ namespace IczpNet.AbpTrees
             SetDepth(Parent.Depth + 1);
             SetFullPath(parent.FullPath);
             SetFullPathName(parent.FullPathName);
-            //SetFullPathPinyin(parent.FullPathPinyin);
         }
+
+        
     }
 }

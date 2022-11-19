@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using IczpNet.AbpTrees.Statics;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Repositories;
@@ -208,20 +209,22 @@ namespace IczpNet.AbpTrees
             return entity;
         }
 
-        public virtual async Task<T> UpdateAsync(Guid id, string name, Guid? parentId)
+        public virtual async Task<T> UpdateAsync(T entity)
         {
-            Assert.If(await Repository.CountAsync(x => x.Name == name && x.Id != id) > 0, $"{name} 已经存在");
-
-            var entity = await Repository.FindAsync(id);
-
             Assert.NotNull(entity, $"目录不存在");
 
-            entity.SetName(name);
+            Assert.NotNull(entity.Name, $"名称不能为Null");
 
-            if (parentId.HasValue)
+            Assert.If(entity.Name.Contains(AbpTreesConsts.SplitPath), $"名称不能包含\"/\"");
+
+            Assert.If(await Repository.CountAsync(x => x.Name == entity.Name && x.Id != entity.Id) > 0, $"{entity.Name} 已经存在");
+
+            //entity.SetName(entity.Name);
+
+            if (entity.ParentId.HasValue)
             {
                 //变更上级
-                var parent = await Repository.GetAsync(parentId.Value);
+                var parent = await Repository.GetAsync(entity.ParentId.Value);
 
                 Assert.NotNull(parent, $"上级目录不存在");
 
@@ -270,6 +273,16 @@ namespace IczpNet.AbpTrees
                 .Where(x => x.ParentId == entityId)
                 .OrderByDescending(x => x.Sorting)
                 .ToList();
+        }
+
+        public virtual async Task RepairDataAsync()
+        {
+            var list = await Repository.GetListAsync(x => x.ParentId == null);
+
+            foreach (var entity in list)
+            {
+                await UpdateAsync(entity);
+            }
         }
     }
 }

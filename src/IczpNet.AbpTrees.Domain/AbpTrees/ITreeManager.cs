@@ -61,7 +61,7 @@ namespace IczpNet.AbpTrees
         Task<List<T>> GetManyAsync(IEnumerable<Guid> idList);
         //Task<T> CreateAsync(string name, Guid? parentId, long sorting, string description);
         Task<T> CreateAsync(T entity);
-        Task<T> UpdateAsync(Guid id, string name, Guid? parentId);
+        Task<T> UpdateAsync(T entity);
         Task DeleteAsync(Guid id);
         /// <summary>
         /// 获取子目录
@@ -69,5 +69,7 @@ namespace IczpNet.AbpTrees
         /// <param name="entityId"></param>
         /// <returns></returns>
         Task<List<T>> GetChildsAsync(Guid? entityId);
+
+        Task RepairDataAsync();
     }
 }
