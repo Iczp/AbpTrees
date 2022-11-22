@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using IczpNet.AbpTrees.Statics;
+using Microsoft.Extensions.Logging;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
@@ -11,20 +12,20 @@ using Volo.Abp.ObjectMapping;
 
 namespace IczpNet.AbpTrees
 {
-    //public class TreeManager<T, TOutput, TWithChildsOuput, TWithParentOuput> : TreeManager<T, TOutput, TWithChildsOuput>, ITreeManager<T, TOutput, TWithChildsOuput, TWithParentOuput>
-    //    where T : TreeEntity<T>, new()
-    //    where TOutput : class, ITreeInfo
-    //    where TWithChildsOuput : class, ITreeWithChildsInfo<TWithChildsOuput>
-    //    where TWithParentOuput : class, ITreeWithParentInfo<TWithParentOuput>
-    //{
-    //    public TreeManager(IRepository<T, Guid> repository) : base(repository) { }
+    public class TreeManager<T, TOutput, TWithChildsOuput, TWithParentOuput> : TreeManager<T, TOutput, TWithChildsOuput>, ITreeManager<T, TOutput, TWithChildsOuput, TWithParentOuput>
+        where T : TreeEntity<T>, new()
+        where TOutput : class, ITreeInfo
+        where TWithChildsOuput : class, ITreeWithChildsInfo<TWithChildsOuput>
+        where TWithParentOuput : class, ITreeWithParentInfo<TWithParentOuput>
+    {
+        public TreeManager(IRepository<T, Guid> repository) : base(repository) { }
 
-    //    public async Task<TWithParentOuput> GetWithParentAsync(Guid id)
-    //    {
-    //        var entity = await GetAsync(id);
-    //        return ObjectMapper.Map<T, TWithParentOuput>(entity);
-    //    }
-    //}
+        public async Task<TWithParentOuput> GetWithParentAsync(Guid id)
+        {
+            var entity = await GetAsync(id);
+            return ObjectMapper.Map<T, TWithParentOuput>(entity);
+        }
+    }
     public class TreeManager<T, TOutput, TWithChildsOuput> : TreeManager<T, TOutput>, ITreeManager<T, TOutput, TWithChildsOuput>
         where T : TreeEntity<T>
         where TOutput : class, ITreeInfo
@@ -39,7 +40,7 @@ namespace IczpNet.AbpTrees
 
         public virtual async Task<List<TWithChildsOuput>> GetAllListWithChildsAsync(Guid? parentId, bool isImportAllChilds = false)
         {
-            var allList = await GetAllListByCacheAsync();
+            var allList = await GetAllByCacheAsync();
 
             return await GetChildsAsync(allList, parentId, isImportAllChilds);
         }
@@ -76,7 +77,7 @@ namespace IczpNet.AbpTrees
         where T : TreeEntity<T>
         where TOutput : class, ITreeInfo
     {
-        
+
         protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetRequiredService<IObjectMapper>();
         protected IDistributedCache<List<TOutput>> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<List<TOutput>>>();
 
@@ -87,7 +88,7 @@ namespace IczpNet.AbpTrees
             return Cache.RemoveAsync(CacheKey);
         }
 
-        public virtual Task<List<TOutput>> GetAllListByCacheAsync()
+        public virtual Task<List<TOutput>> GetAllByCacheAsync()
         {
             return Cache.GetOrAddAsync(CacheKey, async () =>
             {
@@ -243,13 +244,15 @@ namespace IczpNet.AbpTrees
             return entity;
         }
 
-        protected virtual async Task ChangeChildsAsync(T department)
+        protected virtual async Task ChangeChildsAsync(T entiy)
         {
-            foreach (var dep in department.Childs)
-            {
-                dep.SetParent(department);
+            Logger.LogInformation($"ChangeChilds id:{entiy.Id}");
 
-                await ChangeChildsAsync(dep);
+            foreach (var item in entiy.Childs)
+            {
+                item.SetParent(entiy);
+
+                await ChangeChildsAsync(item);
             }
         }
 
@@ -281,8 +284,19 @@ namespace IczpNet.AbpTrees
 
             foreach (var entity in list)
             {
+                await SetEntityAsync(entity);
+
                 await UpdateAsync(entity);
             }
+        }
+
+        protected virtual Task SetEntityAsync(T entity)
+        {
+            Logger.LogInformation($"SetEntityAsync:{entity}");
+
+            entity.SetName(entity.Name);
+
+            return Task.CompletedTask;
         }
     }
 }

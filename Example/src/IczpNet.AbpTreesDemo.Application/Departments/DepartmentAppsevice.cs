@@ -16,9 +16,7 @@ namespace IczpNet.AbpTreesDemo.Departments
             DepartmentGetListInput, 
             DepartmentCreateInput, 
             DepartmentUpdateInput, 
-            DepartmentInfo, 
-            DepartmentWithChildsDto, 
-            DepartmentWithParentDto>, 
+            DepartmentInfo>, 
         IDepartmentAppSevice
     {
         public DepartmentAppService(IRepository<Department, Guid> repository) : base(repository)

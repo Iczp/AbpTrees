@@ -6,14 +6,14 @@ using Volo.Abp.Domain.Services;
 
 namespace IczpNet.AbpTrees
 {
-    //public interface ITreeManager<T, TTreeInfo, TWithChildsOuput, TwithParentOuput> : ITreeManager<T, TTreeInfo, TWithChildsOuput>, IDomainService
-    //    where T : ITreeEntity<T>
-    //    where TTreeInfo : ITreeInfo
-    //    where TWithChildsOuput : ITreeWithChildsInfo<TWithChildsOuput>
-    //    where TwithParentOuput : ITreeWithParentInfo<TwithParentOuput>
-    //{
-    //    Task<TwithParentOuput> GetWithParentAsync(Guid id);
-    //}
+    public interface ITreeManager<T, TTreeInfo, TWithChildsOuput, TwithParentOuput> : ITreeManager<T, TTreeInfo, TWithChildsOuput>, IDomainService
+        where T : ITreeEntity<T>
+        where TTreeInfo : ITreeInfo
+        where TWithChildsOuput : ITreeWithChildsInfo<TWithChildsOuput>
+        where TwithParentOuput : ITreeWithParentInfo<TwithParentOuput>
+    {
+        Task<TwithParentOuput> GetWithParentAsync(Guid id);
+    }
     public interface ITreeManager<T, TTreeInfo, TWithChildsOuput> : ITreeManager<T, TTreeInfo>, IDomainService
         where T : ITreeEntity<T>
         where TTreeInfo : ITreeInfo
@@ -26,7 +26,7 @@ namespace IczpNet.AbpTrees
         where T : ITreeEntity<T>
         where TTreeOutput : ITreeInfo
     {
-        Task<List<TTreeOutput>> GetAllListByCacheAsync();
+        Task<List<TTreeOutput>> GetAllByCacheAsync();
     }
 
     public interface ITreeManager<T> : IDomainService where T : ITreeEntity<T>

@@ -11,103 +11,103 @@ using Volo.Abp.Domain.Repositories;
 
 namespace IczpNet.AbpTrees
 {
-    public abstract class TreeAppService<
-        TEntity,
-        TGetOutputDto,
-        TGetListOutputDto,
-        TGetListInput,
-        TCreateInput,
-        TUpdateInput,
-        TTreeInfo,
-        TTreeWithChildsDto,
-        TTreeWithParentDto>
-        :
-        TreeAppService<
-            TEntity,
-            TGetOutputDto,
-            TGetListOutputDto,
-            TGetListInput,
-            TCreateInput,
-            TUpdateInput,
-            TTreeInfo,
-            TTreeWithChildsDto>
-        ,
-        ITreeAppService<
-        TTreeInfo,
-        TTreeWithChildsDto,
-        TTreeWithParentDto>
-        where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
-        where TGetOutputDto : IEntityDto<Guid>
-        where TGetListOutputDto : IEntityDto<Guid>
-        where TGetListInput : ITreeGetListInput
-        where TCreateInput : ITreeInput
-        where TUpdateInput : ITreeInput
-        where TTreeInfo : ITreeInfo
-        where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
-        where TTreeWithParentDto : ITreeWithParentInfo<TTreeWithParentDto>
-    {
-        //protected override ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto> TreeManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto>>();
-        protected TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
+    //public abstract class TreeAppService<
+    //    TEntity,
+    //    TGetOutputDto,
+    //    TGetListOutputDto,
+    //    TGetListInput,
+    //    TCreateInput,
+    //    TUpdateInput,
+    //    TTreeInfo,
+    //    TTreeWithChildsDto,
+    //    TTreeWithParentDto>
+    //    :
+    //    TreeAppService<
+    //        TEntity,
+    //        TGetOutputDto,
+    //        TGetListOutputDto,
+    //        TGetListInput,
+    //        TCreateInput,
+    //        TUpdateInput,
+    //        TTreeInfo,
+    //        TTreeWithChildsDto>
+    //    ,
+    //    ITreeAppService<
+    //    TTreeInfo,
+    //    TTreeWithChildsDto,
+    //    TTreeWithParentDto>
+    //    where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
+    //    where TGetOutputDto : IEntityDto<Guid>
+    //    where TGetListOutputDto : IEntityDto<Guid>
+    //    where TGetListInput : ITreeGetListInput
+    //    where TCreateInput : ITreeInput
+    //    where TUpdateInput : ITreeInput
+    //    where TTreeInfo : ITreeInfo
+    //    where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
+    //    where TTreeWithParentDto : ITreeWithParentInfo<TTreeWithParentDto>
+    //{
+    //    //protected override ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto> TreeManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto>>();
+    //    protected TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
 
-        [HttpGet]
-        public virtual async Task<TTreeWithParentDto> GetWithParentAsync(Guid id)
-        {
-            await CheckGetPolicyAsync();
+    //    [HttpGet]
+    //    public virtual async Task<TTreeWithParentDto> GetWithParentAsync(Guid id)
+    //    {
+    //        await CheckGetPolicyAsync();
 
-            var entity = await base.GetEntityByIdAsync(id);
+    //        var entity = await base.GetEntityByIdAsync(id);
 
-            return ObjectMapper.Map<TEntity, TTreeWithParentDto>(entity);
-        }
-    }
-    public abstract class TreeAppService<
-        TEntity,
-        TGetOutputDto,
-        TGetListOutputDto,
-        TGetListInput,
-        TCreateInput,
-        TUpdateInput,
-        TTreeInfo,
-        TTreeWithChildsDto>
-        :
-        TreeAppService<
-            TEntity,
-            TGetOutputDto,
-            TGetListOutputDto,
-            TGetListInput,
-            TCreateInput,
-            TUpdateInput,
-            TTreeInfo>
-        ,
-        ITreeAppService<
-        TTreeInfo,
-        TTreeWithChildsDto>
-        where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
-        where TGetOutputDto : IEntityDto<Guid>
-        where TGetListOutputDto : IEntityDto<Guid>
-        where TGetListInput : ITreeGetListInput
-        where TCreateInput : ITreeInput
-        where TUpdateInput : ITreeInput
-        where TTreeInfo : ITreeInfo
-        where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
-    {
-        protected ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto> TreeWithChildsManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto>>();
-        protected TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
+    //        return ObjectMapper.Map<TEntity, TTreeWithParentDto>(entity);
+    //    }
+    //}
+    //public abstract class TreeAppService<
+    //    TEntity,
+    //    TGetOutputDto,
+    //    TGetListOutputDto,
+    //    TGetListInput,
+    //    TCreateInput,
+    //    TUpdateInput,
+    //    TTreeInfo,
+    //    TTreeWithChildsDto>
+    //    :
+    //    TreeAppService<
+    //        TEntity,
+    //        TGetOutputDto,
+    //        TGetListOutputDto,
+    //        TGetListInput,
+    //        TCreateInput,
+    //        TUpdateInput,
+    //        TTreeInfo>
+    //    ,
+    //    ITreeAppService<
+    //    TTreeInfo,
+    //    TTreeWithChildsDto>
+    //    where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
+    //    where TGetOutputDto : IEntityDto<Guid>
+    //    where TGetListOutputDto : IEntityDto<Guid>
+    //    where TGetListInput : ITreeGetListInput
+    //    where TCreateInput : ITreeInput
+    //    where TUpdateInput : ITreeInput
+    //    where TTreeInfo : ITreeInfo
+    //    where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
+    //{
+    //    protected ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto> TreeWithChildsManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto>>();
+    //    protected TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
 
-        [HttpGet]
-        public virtual async Task<List<TTreeWithChildsDto>> GetAllListWithChildsAsync(Guid? ParentId, bool IsImportAllChilds)
-        {
-            await CheckGetListPolicyAsync();
+    //    [HttpGet]
+    //    public virtual async Task<List<TTreeWithChildsDto>> GetAllListWithChildsAsync(Guid? ParentId, bool IsImportAllChilds)
+    //    {
+    //        await CheckGetListPolicyAsync();
 
-            return await TreeWithChildsManager.GetAllListWithChildsAsync(ParentId, IsImportAllChilds);
-        }
-        [HttpGet]
-        public virtual async Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> idList)
-        {
-            await CheckGetPolicyAsync();
+    //        return await TreeWithChildsManager.GetAllListWithChildsAsync(ParentId, IsImportAllChilds);
+    //    }
+    //    [HttpGet]
+    //    public virtual async Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> idList)
+    //    {
+    //        await CheckGetPolicyAsync();
 
-            return await TreeWithChildsManager.GetRootListAsync(idList);
-        }
-    }
+    //        return await TreeWithChildsManager.GetRootListAsync(idList);
+    //    }
+    //}
     public abstract class TreeAppService<
         TEntity,
         TGetOutputDto,
@@ -139,11 +139,11 @@ namespace IczpNet.AbpTrees
 
 
         [HttpGet]
-        public virtual async Task<List<TTreeInfo>> GetAllListByCacheAsync()
+        public virtual async Task<List<TTreeInfo>> GetAllByCacheAsync()
         {
             await CheckGetListPolicyAsync();
 
-            return await TreeCacheManager.GetAllListByCacheAsync();
+            return await TreeCacheManager.GetAllByCacheAsync();
         }
     }
 
@@ -202,7 +202,7 @@ namespace IczpNet.AbpTrees
             return (await base.CreateFilteredQueryAsync(input))
                 .WhereIf(input.Depth.HasValue, x => x.Depth == input.Depth)
                 .WhereIf(input.IsEnabledParentId, x => x.ParentId == input.ParentId)
-                .WhereIf(!string.IsNullOrWhiteSpace(input.Keyword), x => x.Name.Contains(input.Keyword))
+                //.WhereIf(!string.IsNullOrWhiteSpace(input.Keyword), x => x.Name.Contains(input.Keyword))
                ;
         }
 

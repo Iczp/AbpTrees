@@ -11,6 +11,9 @@ namespace IczpNet.AbpTrees
         IEnumerable<T> Childs { get; }
         void FillCreate(Guid id,string name, Guid? parentId);
         void FillUpdate(string name, Guid? parentId);
+
+        void SetName(string name);
+
         //void SetParent(T parent);
         //void SetId(Guid id);
     }
