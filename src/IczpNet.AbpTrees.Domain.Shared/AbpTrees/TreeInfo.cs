@@ -1,21 +1,18 @@
-﻿using System;
-
-
-namespace IczpNet.AbpTrees
+﻿namespace IczpNet.AbpTrees
 {
     /// <summary>
     /// TreeInfo
     /// </summary>
-    public class TreeInfo : ITreeInfo
+    public class TreeInfo<TKey> : ITreeInfo<TKey> where TKey : struct
     {
         /// <summary>
         /// Id
         /// </summary>
-        public virtual Guid Id { get; set; }
+        public virtual TKey Id { get; set; }
         /// <summary>
         /// ParentId
         /// </summary>
-        public virtual Guid? ParentId { get; set; }
+        public virtual TKey? ParentId { get; set; }
         /// <summary>
         /// Name
         /// </summary>

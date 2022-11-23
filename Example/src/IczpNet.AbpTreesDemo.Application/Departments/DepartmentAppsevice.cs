@@ -8,15 +8,16 @@ namespace IczpNet.AbpTreesDemo.Departments
 {
 
     [Route($"Api/App/{AbpTreesDemoRemoteServiceConsts.ModuleName}/[Controller]/[Action]")]
-    public class DepartmentAppService 
+    public class DepartmentAppService
         : TreeAppService<
-            Department, 
-            DepartmentDto, 
-            DepartmentDto, 
-            DepartmentGetListInput, 
-            DepartmentCreateInput, 
-            DepartmentUpdateInput, 
-            DepartmentInfo>, 
+            Department,
+            Guid,
+            DepartmentDto,
+            DepartmentDto,
+            DepartmentGetListInput,
+            DepartmentCreateInput,
+            DepartmentUpdateInput,
+            DepartmentInfo>,
         IDepartmentAppSevice
     {
         public DepartmentAppService(IRepository<Department, Guid> repository) : base(repository)

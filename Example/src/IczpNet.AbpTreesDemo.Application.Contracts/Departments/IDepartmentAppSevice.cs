@@ -13,7 +13,7 @@ namespace IczpNet.AbpTreesDemo.Departments
             DepartmentGetListInput,
             DepartmentCreateInput,
             DepartmentUpdateInput>
-        , ITreeAppService<DepartmentInfo>
+        , ITreeAppService<Guid, DepartmentInfo>
     {
     }
 }

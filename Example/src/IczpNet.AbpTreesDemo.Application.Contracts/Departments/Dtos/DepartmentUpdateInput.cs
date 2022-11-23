@@ -3,10 +3,7 @@ using System;
 
 namespace IczpNet.AbpTreesDemo.Departments.Dtos;
 
-/// <summary>
-/// DepartmentUpdateInput
-/// </summary>
-public class DepartmentUpdateInput : ITreeInput
+public class DepartmentUpdateInput : ITreeInput<Guid>
 {
 
     /// <summary>

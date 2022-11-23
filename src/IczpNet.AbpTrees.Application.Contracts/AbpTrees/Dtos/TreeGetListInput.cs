@@ -1,11 +1,9 @@
-﻿using System;
-using System.ComponentModel;
-using IczpNet.AbpTrees.Dtos;
+﻿using System.ComponentModel;
 using Volo.Abp.Application.Dtos;
 
 namespace IczpNet.AbpTrees.Dtos
 {
-    public class TreeGetListInput : PagedAndSortedResultRequestDto, ITreeGetListInput
+    public class TreeGetListInput<TKey> : PagedAndSortedResultRequestDto, ITreeGetListInput<TKey> where TKey : struct
     {
         [DefaultValue(false)]
         public virtual bool IsEnabledParentId { get; set; }
@@ -14,7 +12,7 @@ namespace IczpNet.AbpTrees.Dtos
         public virtual int? Depth { get; set; }
 
         [DefaultValue(null)]
-        public virtual Guid? ParentId { get; set; }
+        public virtual TKey? ParentId { get; set; }
 
         [DefaultValue(null)]
         public virtual string Keyword { get; set; }

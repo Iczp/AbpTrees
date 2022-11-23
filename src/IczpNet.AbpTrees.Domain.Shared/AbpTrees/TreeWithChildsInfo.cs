@@ -2,10 +2,9 @@
 
 namespace IczpNet.AbpTrees
 {
-    /// <summary>
-    /// TreeWithChildsInfo
-    /// </summary>
-    public class TreeWithChildsInfo<T> : TreeInfo, ITreeWithChildsInfo<T>
+    public class TreeWithChildsInfo<T, TKey> : TreeInfo<TKey>, ITreeWithChildsInfo<T>
+        //where T : class, ITreeInfo<TKey>
+        where TKey : struct
     {
         public virtual List<T> Childs { get; set; }
 

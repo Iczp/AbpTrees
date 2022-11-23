@@ -17,8 +17,8 @@ public class AbpTreesDomainAutoMapperProfile : Profile
          * //https://docs.automapper.org/en/latest/8.0-Upgrade-Guide.html
          */
 
-        CreateMap(typeof(TreeEntity<>), typeof(TreeInfo)).ConvertUsing(typeof(Converter<,>));
-        CreateMap(typeof(TreeEntity<>), typeof(TreeWithChildsInfo<>)).ConvertUsing(typeof(Converter<,>));
-        CreateMap(typeof(TreeEntity<>), typeof(TreeWithParentInfo<>)).ConvertUsing(typeof(Converter<,>));
+        //CreateMap(typeof(TreeEntity<>), typeof(TreeInfo)).ConvertUsing(typeof(Converter<,>));
+        CreateMap(typeof(TreeEntity<,>), typeof(TreeWithChildsInfo<,>)).ConvertUsing(typeof(Converter<,>));
+        CreateMap(typeof(TreeEntity<,>), typeof(TreeWithParentInfo<,>)).ConvertUsing(typeof(Converter<,>));
     }
 }

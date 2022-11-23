@@ -1,55 +1,57 @@
-﻿using System;
+﻿using IczpNet.AbpTrees.Statics;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using IczpNet.AbpTrees.Statics;
-using Microsoft.Extensions.Logging;
 using Volo.Abp.Caching;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
 
 namespace IczpNet.AbpTrees
 {
-    public class TreeManager<T, TOutput, TWithChildsOuput, TWithParentOuput> : TreeManager<T, TOutput, TWithChildsOuput>, ITreeManager<T, TOutput, TWithChildsOuput, TWithParentOuput>
-        where T : TreeEntity<T>, new()
-        where TOutput : class, ITreeInfo
+    public class TreeManager<T, TKey, TOutput, TWithChildsOuput, TWithParentOuput> : TreeManager<T, TKey, TOutput, TWithChildsOuput>, ITreeManager<T, TKey, TOutput, TWithChildsOuput, TWithParentOuput>
+         where T : class, ITreeEntity<T, TKey>
+        where TKey : struct
+        where TOutput : class, ITreeInfo<TKey>
         where TWithChildsOuput : class, ITreeWithChildsInfo<TWithChildsOuput>
         where TWithParentOuput : class, ITreeWithParentInfo<TWithParentOuput>
     {
-        public TreeManager(IRepository<T, Guid> repository) : base(repository) { }
+        public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
-        public async Task<TWithParentOuput> GetWithParentAsync(Guid id)
+        public async Task<TWithParentOuput> GetWithParentAsync(TKey id)
         {
             var entity = await GetAsync(id);
             return ObjectMapper.Map<T, TWithParentOuput>(entity);
         }
     }
-    public class TreeManager<T, TOutput, TWithChildsOuput> : TreeManager<T, TOutput>, ITreeManager<T, TOutput, TWithChildsOuput>
-        where T : TreeEntity<T>
-        where TOutput : class, ITreeInfo
+    public class TreeManager<T, TKey, TOutput, TWithChildsOuput> : TreeManager<T, TKey, TOutput>, ITreeManager<T, TKey, TOutput, TWithChildsOuput>
+         where T : class, ITreeEntity<T, TKey>
+        where TKey : struct
+        where TOutput : class, ITreeInfo<TKey>
         where TWithChildsOuput : class, ITreeWithChildsInfo<TWithChildsOuput>
     {
-        public TreeManager(IRepository<T, Guid> repository) : base(repository) { }
+        public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
         public override Task RemoveCacheAsync()
         {
             return Cache.RemoveAsync(CacheKey);
         }
 
-        public virtual async Task<List<TWithChildsOuput>> GetAllListWithChildsAsync(Guid? parentId, bool isImportAllChilds = false)
+        public virtual async Task<List<TWithChildsOuput>> GetAllListWithChildsAsync(TKey? parentId, bool isImportAllChilds = false)
         {
             var allList = await GetAllByCacheAsync();
 
             return await GetChildsAsync(allList, parentId, isImportAllChilds);
         }
 
-        private async Task<List<TWithChildsOuput>> GetChildsAsync(List<TOutput> allList, Guid? parentId, bool isImportAllChilds)
+        private async Task<List<TWithChildsOuput>> GetChildsAsync(List<TOutput> allList, TKey? parentId, bool isImportAllChilds)
         {
             var list = new List<TWithChildsOuput>();
 
-            foreach (var treeInfo in allList.Where(x => x.ParentId == parentId).ToList())
+            foreach (var treeInfo in allList.Where(x => x.ParentId.Equals(parentId) ).ToList())
             {
                 var item = ObjectMapper.Map<TOutput, TWithChildsOuput>(treeInfo);
 
@@ -62,7 +64,7 @@ namespace IczpNet.AbpTrees
             return list;
         }
 
-        public virtual async Task<List<TWithChildsOuput>> GetRootListAsync(List<Guid> idList)
+        public virtual async Task<List<TWithChildsOuput>> GetRootListAsync(List<TKey> idList)
         {
             var rootList = (await Repository.GetQueryableAsync())
                .Where(x => x.ParentId == null)
@@ -73,15 +75,16 @@ namespace IczpNet.AbpTrees
         }
     }
 
-    public class TreeManager<T, TOutput> : TreeManager<T>, ITreeManager<T, TOutput>
-        where T : TreeEntity<T>
-        where TOutput : class, ITreeInfo
+    public class TreeManager<T, TKey, TOutput> : TreeManager<T, TKey>, ITreeManager<T, TKey, TOutput>
+        where T : class, ITreeEntity<T, TKey>
+        where TKey : struct
+        where TOutput : class, ITreeInfo<TKey>
     {
 
         protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetRequiredService<IObjectMapper>();
         protected IDistributedCache<List<TOutput>> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<List<TOutput>>>();
 
-        public TreeManager(IRepository<T, Guid> repository) : base(repository) { }
+        public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
         public override Task RemoveCacheAsync()
         {
@@ -106,17 +109,18 @@ namespace IczpNet.AbpTrees
     }
 
 
-    public class TreeManager<T> : DomainService, ITreeManager<T>
-        where T : TreeEntity<T>
+    public class TreeManager<T, TKey> : DomainService, ITreeManager<T, TKey>
+        where T : class, ITreeEntity<T, TKey>
+        where TKey : struct
     {
         public virtual string CacheKey => typeof(T).FullName;
-        public IRepository<T, Guid> Repository { get; }
-        public TreeManager(IRepository<T, Guid> repository)
+        public IRepository<T, TKey> Repository { get; }
+        public TreeManager(IRepository<T, TKey> repository)
         {
             Repository = repository;
         }
 
-        public virtual async Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<Guid> departmentIdList)
+        public virtual async Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<TKey> departmentIdList)
         {
             var fullPathsQueryable = (await Repository.GetQueryableAsync())
                 .Where(x => departmentIdList.Contains(x.Id))
@@ -150,9 +154,9 @@ namespace IczpNet.AbpTrees
             return QueryCurrentAndAllChildsAsync(new List<string>() { fullPath });
         }
 
-        public virtual Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(Guid departmentId)
+        public virtual Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(TKey departmentId)
         {
-            return QueryCurrentAndAllChildsAsync(new List<Guid>() { departmentId });
+            return QueryCurrentAndAllChildsAsync(new List<TKey>() { departmentId });
         }
 
         public virtual Task RemoveCacheAsync()
@@ -161,17 +165,17 @@ namespace IczpNet.AbpTrees
             return Task.CompletedTask;
         }
 
-        public virtual Task<T> FindAsync(Guid id)
+        public virtual Task<T> FindAsync(TKey id)
         {
             return Repository.FindAsync(id);
         }
 
-        public virtual Task<T> GetAsync(Guid id)
+        public virtual Task<T> GetAsync(TKey id)
         {
             return Repository.GetAsync(id);
         }
 
-        public virtual Task<List<T>> GetManyAsync(IEnumerable<Guid> idList)
+        public virtual Task<List<T>> GetManyAsync(IEnumerable<TKey> idList)
         {
             return Repository.GetListAsync(x => idList.Contains(x.Id));
         }
@@ -180,30 +184,20 @@ namespace IczpNet.AbpTrees
         {
             Assert.If(await Repository.CountAsync(x => x.Name == inputEntity.Name) > 0, $"Already exists:{inputEntity.Name}");
 
-            //inputEntity.SetId(GuidGenerator.Create());
-
-            //inputEntity.SetName((string)inputEntity.Name);
-
-            //inputEntity.SetFullPath((string)null);
-
-            //inputEntity.SetFullPathName((string)null);
-
-            //inputEntity.SetFullPathPinyin((string)null);
-
-            var entity = await Repository.InsertAsync(inputEntity, autoSave: true);
-
             if (inputEntity.ParentId.HasValue)
             {
-                var parent = await Repository.GetAsync((Guid)inputEntity.ParentId.Value);
+                var parent = await Repository.GetAsync(inputEntity.ParentId.Value);
 
-                Assert.NotNull((T)parent, $"No such parent entity:{inputEntity.ParentId}");
+                Assert.NotNull(parent, $"No such parent entity:{inputEntity.ParentId}");
 
-                entity.SetParent((T)parent);
+                inputEntity.SetParent(parent);
             }
             else
             {
-                entity.SetParent((T)null);
+                inputEntity.SetParent(null);
             }
+
+            var entity = await Repository.InsertAsync(inputEntity, autoSave: true);
 
             await RemoveCacheAsync();
 
@@ -218,7 +212,7 @@ namespace IczpNet.AbpTrees
 
             Assert.If(entity.Name.Contains(AbpTreesConsts.SplitPath), $"名称不能包含\"/\"");
 
-            Assert.If(await Repository.CountAsync(x => x.Name == entity.Name && x.Id != entity.Id) > 0, $"{entity.Name} 已经存在");
+            Assert.If(await Repository.CountAsync(x => x.Name == entity.Name && !x.Id.Equals(entity.Id)) > 0, $"{entity.Name} 已经存在");
 
             //entity.SetName(entity.Name);
 
@@ -256,7 +250,7 @@ namespace IczpNet.AbpTrees
             }
         }
 
-        public virtual async Task DeleteAsync(Guid id)
+        public virtual async Task DeleteAsync(TKey id)
         {
             var entity = await Repository.GetAsync(id);
 
@@ -269,11 +263,11 @@ namespace IczpNet.AbpTrees
             await RemoveCacheAsync();
         }
 
-        public async Task<List<T>> GetChildsAsync(Guid? entityId)
+        public async Task<List<T>> GetChildsAsync(TKey? entityId)
         {
             //return await Repository.GetListAsync(x => x.ParentId == departmentId);
             return (await Repository.GetQueryableAsync())
-                .Where(x => x.ParentId == entityId)
+                .Where(x => x.ParentId.Equals(entityId))
                 .OrderByDescending(x => x.Sorting)
                 .ToList();
         }

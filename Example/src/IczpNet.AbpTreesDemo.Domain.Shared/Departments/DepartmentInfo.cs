@@ -1,8 +1,9 @@
 ﻿using IczpNet.AbpTrees;
+using System;
 
 namespace IczpNet.AbpTreesDemo.Departments
 {
-    public class DepartmentInfo : TreeInfo
+    public class DepartmentInfo : TreeInfo<Guid>
     {
     }
 }

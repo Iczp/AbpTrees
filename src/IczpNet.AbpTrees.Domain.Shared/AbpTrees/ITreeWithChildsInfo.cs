@@ -2,7 +2,7 @@
 
 namespace IczpNet.AbpTrees
 {
-    public interface ITreeWithChildsInfo<T> : ITreeInfo
+    public interface ITreeWithChildsInfo<T> //: ITreeInfo<TKey> where TKey : struct
     {
         List<T> Childs { get; set; }
     }

@@ -1,21 +1,15 @@
-﻿using System;
-
-
-namespace IczpNet.AbpTrees
+﻿namespace IczpNet.AbpTrees
 {
-    /// <summary>
-    /// TreeInfo
-    /// </summary>
-    public interface ITreeInfo 
+    public interface ITreeInfo<TKey> where TKey : struct
     {
         /// <summary>
         /// Id
         /// </summary>
-        Guid Id { get; set; }
+        TKey Id { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        Guid? ParentId { get; set; }
+        TKey? ParentId { get; set; }
         /// <summary>
         /// Name
         /// </summary>

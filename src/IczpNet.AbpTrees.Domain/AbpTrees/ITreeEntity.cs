@@ -4,56 +4,26 @@ using Volo.Abp.Domain.Entities;
 
 namespace IczpNet.AbpTrees
 {
-    public interface ITreeEntity<T> : ITreeEntity where T : ITreeEntity
+    public interface ITreeEntity<T, TKey> : ITreeEntity<TKey>
+        where T : ITreeEntity<TKey>
+        where TKey : struct
     {
-
         T Parent { get; }
         IEnumerable<T> Childs { get; }
-        void FillCreate(Guid id,string name, Guid? parentId);
-        void FillUpdate(string name, Guid? parentId);
-
         void SetName(string name);
-
-        //void SetParent(T parent);
-        //void SetId(Guid id);
+        void SetParent(T parent);
+        void SetParentId(TKey? parentId);
     }
 
 
-    public interface ITreeEntity : IEntity<Guid>
+    public interface ITreeEntity<TKey> : IEntity<TKey> where TKey : struct
     {
-        /// <summary>
-        /// 名称
-        /// </summary>
         string Name { get; }
-
-        /// <summary>
-        /// 父级Id
-        /// </summary>
-        Guid? ParentId { get; }
-
-        /// <summary>
-        /// 全路径
-        /// </summary>
+        TKey? ParentId { get; }
         string FullPath { get; }
-
-        /// <summary>
-        /// 全路径名称
-        /// </summary>
         string FullPathName { get; }
-
-        /// <summary>
-        /// 层级
-        /// </summary>
         int Depth { get; }
-
-        /// <summary>
-        /// 排序（越大越前面） DESC
-        /// </summary>
         double Sorting { get; set; }
-
-        /// <summary>
-        /// 说明
-        /// </summary>
         string Description { get; set; }
     }
 }

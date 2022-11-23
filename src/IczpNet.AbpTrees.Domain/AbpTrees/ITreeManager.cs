@@ -6,30 +6,35 @@ using Volo.Abp.Domain.Services;
 
 namespace IczpNet.AbpTrees
 {
-    public interface ITreeManager<T, TTreeInfo, TWithChildsOuput, TwithParentOuput> : ITreeManager<T, TTreeInfo, TWithChildsOuput>, IDomainService
-        where T : ITreeEntity<T>
-        where TTreeInfo : ITreeInfo
+    public interface ITreeManager<T, TKey, TTreeInfo, TWithChildsOuput, TwithParentOuput> : ITreeManager<T, TKey, TTreeInfo, TWithChildsOuput>, IDomainService
+        where T : ITreeEntity<TKey>
+        where TKey : struct
+        where TTreeInfo : ITreeInfo<TKey>
         where TWithChildsOuput : ITreeWithChildsInfo<TWithChildsOuput>
         where TwithParentOuput : ITreeWithParentInfo<TwithParentOuput>
     {
-        Task<TwithParentOuput> GetWithParentAsync(Guid id);
+        Task<TwithParentOuput> GetWithParentAsync(TKey id);
     }
-    public interface ITreeManager<T, TTreeInfo, TWithChildsOuput> : ITreeManager<T, TTreeInfo>, IDomainService
-        where T : ITreeEntity<T>
-        where TTreeInfo : ITreeInfo
+    public interface ITreeManager<T, TKey, TTreeInfo, TWithChildsOuput> : ITreeManager<T, TKey, TTreeInfo>, IDomainService
+        where T : ITreeEntity<TKey>
+        where TKey : struct
+        where TTreeInfo : ITreeInfo<TKey>
         where TWithChildsOuput : ITreeWithChildsInfo<TWithChildsOuput>
     {
-        Task<List<TWithChildsOuput>> GetAllListWithChildsAsync(Guid? parentId, bool isImportAllChilds = false);
-        Task<List<TWithChildsOuput>> GetRootListAsync(List<Guid> idList);
+        Task<List<TWithChildsOuput>> GetAllListWithChildsAsync(TKey? parentId, bool isImportAllChilds = false);
+        Task<List<TWithChildsOuput>> GetRootListAsync(List<TKey> idList);
     }
-    public interface ITreeManager<T, TTreeOutput> : ITreeManager<T>, IDomainService
-        where T : ITreeEntity<T>
-        where TTreeOutput : ITreeInfo
+    public interface ITreeManager<T, TKey, TTreeOutput> : ITreeManager<T, TKey>, IDomainService
+        where T : ITreeEntity<TKey>
+        where TKey : struct
+        where TTreeOutput : ITreeInfo<TKey>
     {
         Task<List<TTreeOutput>> GetAllByCacheAsync();
     }
 
-    public interface ITreeManager<T> : IDomainService where T : ITreeEntity<T>
+    public interface ITreeManager<T, TKey> : IDomainService
+        where T : ITreeEntity<TKey>
+        where TKey : struct
     {
         Task RemoveCacheAsync();
         /// <summary>
@@ -37,13 +42,13 @@ namespace IczpNet.AbpTrees
         /// </summary>
         /// <param name="treeEntityIdList"></param>
         /// <returns></returns>
-        Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<Guid> treeEntityIdList);
+        Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<TKey> treeEntityIdList);
         /// <summary>
         /// 查找当前目录及所有子目录
         /// </summary>
         /// <param name="treeEntityIdList"></param>
         /// <returns></returns>
-        Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(Guid treeEntityIdList);
+        Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(TKey treeEntityIdList);
         /// <summary>
         /// 查找当前目录及所有子目录
         /// </summary>
@@ -56,19 +61,19 @@ namespace IczpNet.AbpTrees
         /// <param name="fullPaths"></param>
         /// <returns></returns>
         Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<string> fullPaths);
-        Task<T> FindAsync(Guid id);
-        Task<T> GetAsync(Guid id);
-        Task<List<T>> GetManyAsync(IEnumerable<Guid> idList);
-        //Task<T> CreateAsync(string name, Guid? parentId, long sorting, string description);
+        Task<T> FindAsync(TKey id);
+        Task<T> GetAsync(TKey id);
+        Task<List<T>> GetManyAsync(IEnumerable<TKey> idList);
+        //Task<T> CreateAsync(string name, TKey? parentId, long sorting, string description);
         Task<T> CreateAsync(T entity);
         Task<T> UpdateAsync(T entity);
-        Task DeleteAsync(Guid id);
+        Task DeleteAsync(TKey id);
         /// <summary>
         /// 获取子目录
         /// </summary>
         /// <param name="entityId"></param>
         /// <returns></returns>
-        Task<List<T>> GetChildsAsync(Guid? entityId);
+        Task<List<T>> GetChildsAsync(TKey? entityId);
 
         Task RepairDataAsync();
     }

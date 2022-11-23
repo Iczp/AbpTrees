@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace IczpNet.AbpTrees.Dtos
+﻿namespace IczpNet.AbpTrees.Dtos
 {
-    public interface ITreeGetListInput
+    public interface ITreeGetListInput<TKey> where TKey : struct
     {
         bool IsEnabledParentId { get; set; }
 
         int? Depth { get; set; }
 
-        Guid? ParentId { get; set; }
+        TKey? ParentId { get; set; }
 
         string Keyword { get; set; }
     }

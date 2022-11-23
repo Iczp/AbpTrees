@@ -1,11 +1,9 @@
 ﻿using IczpNet.AbpTrees;
+using System;
 
 namespace IczpNet.AbpTreesDemo.Departments.Dtos;
 
-/// <summary>
-/// DepartmentWithChildsDto
-/// </summary>
-public class DepartmentWithChildsDto : TreeWithChildsInfo<DepartmentWithChildsDto>
+public class DepartmentWithChildsDto : TreeWithChildsInfo<DepartmentWithChildsDto, Guid>
 {
     public virtual int ChildsCount { get; set; }
 }

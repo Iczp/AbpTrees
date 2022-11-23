@@ -2,9 +2,9 @@
 
 namespace IczpNet.AbpTrees.Dtos
 {
-    public interface ITreeInput
+    public interface ITreeInput<TKey> where TKey : struct
     {
         string Name { get; set; }
-        Guid? ParentId { get; set; }
+        TKey? ParentId { get; set; }
     }
 }

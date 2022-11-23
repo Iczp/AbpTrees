@@ -1,11 +1,9 @@
 ﻿using IczpNet.AbpTrees;
+using System;
 
 namespace IczpNet.AbpTreesDemo.Departments.Dtos;
 
-/// <summary>
-/// DepartmentWithParentDto
-/// </summary>
-public class DepartmentWithParentDto : TreeWithParentInfo<DepartmentWithParentDto>
+public class DepartmentWithParentDto : TreeWithParentInfo<DepartmentWithParentDto, Guid>
 {
     /// <summary>
     /// 排序（越大越前面） DESC

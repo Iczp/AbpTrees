@@ -21,8 +21,10 @@ public class AbpTreesDomainModule : AbpModule
             options.AddMaps<AbpTreesDomainModule>();
         });
 
-        context.Services.AddTransient(typeof(ITreeManager<>), typeof(TreeManager<>));
+        //context.Services.AddTransient(typeof(ITreeManager<>), typeof(TreeManager<>));
         context.Services.AddTransient(typeof(ITreeManager<,>), typeof(TreeManager<,>));
         context.Services.AddTransient(typeof(ITreeManager<,,>), typeof(TreeManager<,,>));
+        context.Services.AddTransient(typeof(ITreeManager<,,,>), typeof(TreeManager<,,,>));
+        context.Services.AddTransient(typeof(ITreeManager<,,,,>), typeof(TreeManager<,,,,>));
     }
 }

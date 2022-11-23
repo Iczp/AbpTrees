@@ -1,5 +1,4 @@
-﻿using IczpNet.AbpTreesDemo.Departments;
-using System;
+﻿using System;
 using Volo.Abp.Application.Dtos;
 
 namespace IczpNet.AbpTreesDemo.Departments.Dtos
