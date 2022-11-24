@@ -55,6 +55,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTrees.Domain", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTrees.Domain.Shared", "..\src\IczpNet.AbpTrees.Domain.Shared\IczpNet.AbpTrees.Domain.Shared.csproj", "{A7B806FD-75ED-4F4E-A89D-D7B03B872528}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IczpNet.AbpTrees.Installer", "..\src\IczpNet.AbpTrees.Installer\IczpNet.AbpTrees.Installer.csproj", "{9002E433-9CC2-4212-88D4-832A1B78FA3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -149,6 +151,10 @@ Global
 		{A7B806FD-75ED-4F4E-A89D-D7B03B872528}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7B806FD-75ED-4F4E-A89D-D7B03B872528}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7B806FD-75ED-4F4E-A89D-D7B03B872528}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9002E433-9CC2-4212-88D4-832A1B78FA3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9002E433-9CC2-4212-88D4-832A1B78FA3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9002E433-9CC2-4212-88D4-832A1B78FA3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9002E433-9CC2-4212-88D4-832A1B78FA3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -176,6 +182,7 @@ Global
 		{4B12DFE6-41E8-4FED-9AD3-4914C35D8E71} = {7C20111E-6C5D-4F4C-9FFC-767D2B052497}
 		{EE566382-A191-434A-A103-0800A1DAFF58} = {7C20111E-6C5D-4F4C-9FFC-767D2B052497}
 		{A7B806FD-75ED-4F4E-A89D-D7B03B872528} = {7C20111E-6C5D-4F4C-9FFC-767D2B052497}
+		{9002E433-9CC2-4212-88D4-832A1B78FA3A} = {7C20111E-6C5D-4F4C-9FFC-767D2B052497}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4324B3B4-B60B-4E3C-91D8-59576B4E26DD}
