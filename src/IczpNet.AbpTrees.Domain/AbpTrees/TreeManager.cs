@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Caching;
-using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
@@ -206,13 +205,19 @@ namespace IczpNet.AbpTrees
 
         public virtual async Task<T> UpdateAsync(T entity)
         {
-            Assert.NotNull(entity, $"目录不存在");
+            Assert.NotNull(entity, $"an entity is no such.");
 
-            Assert.NotNull(entity.Name, $"名称不能为Null");
+            Assert.NotNull(entity.Name, $"[Name] cannot be null.");
 
-            Assert.If(entity.Name.Contains(AbpTreesConsts.SplitPath), $"名称不能包含\"/\"");
+            Assert.If(entity.Name.Contains(AbpTreesConsts.SplitPath), $"[Name] cannot contains char:\"{AbpTreesConsts.SplitPath}\"");
 
-            Assert.If(await Repository.CountAsync(x => x.Name == entity.Name && !x.Id.Equals(entity.Id)) > 0, $"{entity.Name} 已经存在");
+            Assert.NotNull(entity.ParentId.Equals(entity.Id), $"ParentId[{entity.ParentId}] may cause infinite loop.");
+
+            //var arr = entity.FullPath.Split(AbpTreesConsts.SplitPath);
+
+            //Array.IndexOf(arr, entity.ParentId);
+
+            Assert.If(await Repository.CountAsync(x => x.Name == entity.Name && !x.Id.Equals(entity.Id)) > 0, $" Name[{entity.Name}] already such.");
 
             //entity.SetName(entity.Name);
 
@@ -221,7 +226,7 @@ namespace IczpNet.AbpTrees
                 //变更上级
                 var parent = await Repository.GetAsync(entity.ParentId.Value);
 
-                Assert.NotNull(parent, $"上级目录不存在");
+                Assert.NotNull(parent, $"[Parent] is no such.");
 
                 entity.SetParent(parent);
             }
@@ -230,7 +235,7 @@ namespace IczpNet.AbpTrees
                 entity.SetParent(null);
             }
 
-            //变更子集
+            //update childs
             await ChangeChildsAsync(entity);
 
             await RemoveCacheAsync();
@@ -256,7 +261,7 @@ namespace IczpNet.AbpTrees
 
             var childCount = entity.Childs.Count();
 
-            Assert.If(childCount > 0, $"有 {childCount} 个子目录,不能删除");
+            Assert.If(childCount > 0, $"Has ({childCount}) childs, cannot delete.");
 
             await Repository.DeleteAsync(entity);
 

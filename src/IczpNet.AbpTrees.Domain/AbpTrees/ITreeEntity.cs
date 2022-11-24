@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Volo.Abp.Domain.Entities;
 
 namespace IczpNet.AbpTrees

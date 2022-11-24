@@ -61,73 +61,31 @@ An abp module that provides standard tree structure entity implement.
 #### ITreeEntity
 
 ```C#
-using System;
 using System.Collections.Generic;
 using Volo.Abp.Domain.Entities;
 
 namespace IczpNet.AbpTrees
 {
-    public interface ITreeEntity<T> : ITreeEntity where T : ITreeEntity
+    public interface ITreeEntity<T, TKey> : ITreeEntity<TKey>
+        where T : ITreeEntity<TKey>
+        where TKey : struct
     {
-
         T Parent { get; }
         IEnumerable<T> Childs { get; }
-        void FillCreate(Guid id,string name, Guid? parentId);
-        //void SetParent(T parent);
-        //void SetId(Guid id);
+        void SetName(string name);
+        void SetParent(T parent);
+        void SetParentId(TKey? parentId);
     }
 
 
-    public interface ITreeEntity : IEntity<Guid>
+    public interface ITreeEntity<TKey> : IEntity<TKey> where TKey : struct
     {
-        /// <summary>
-        /// 名称
-        /// </summary>
         string Name { get; }
-
-        ///// <summary>
-        ///// 名称_拼音
-        ///// </summary>
-        //string Name_Pinyin { get; }
-
-        ///// <summary>
-        ///// 名称_拼音
-        ///// </summary>
-        //string Name_PY { get; }
-
-        /// <summary>
-        /// 父级Id
-        /// </summary>
-        Guid? ParentId { get; }
-
-        /// <summary>
-        /// 全路径
-        /// </summary>
+        TKey? ParentId { get; }
         string FullPath { get; }
-
-        /// <summary>
-        /// 全路径名称
-        /// </summary>
         string FullPathName { get; }
-
-        ///// <summary>
-        ///// 全路径拼音
-        ///// </summary>
-        //string FullPathPinyin { get; }
-
-        /// <summary>
-        /// 层级
-        /// </summary>
         int Depth { get; }
-
-        /// <summary>
-        /// 排序（越大越前面） DESC
-        /// </summary>
         double Sorting { get; set; }
-
-        /// <summary>
-        /// 说明
-        /// </summary>
         string Description { get; set; }
     }
 }
@@ -139,89 +97,43 @@ namespace IczpNet.AbpTrees
 #### TreeEntity
 
 ```C#
+using IczpNet.AbpTrees.Statics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using IczpNet.AbpTrees.Statics;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace IczpNet.AbpTrees
 {
-    public abstract class TreeEntity<T> : FullAuditedAggregateRoot<Guid>, ITreeEntity<T> where T : ITreeEntity
+    public abstract class TreeEntity<T, TKey> : FullAuditedAggregateRoot<TKey>, ITreeEntity<T, TKey>
+        where T : ITreeEntity<TKey>
+        where TKey : struct
     {
-        /// <summary>
-        /// 名称
-        /// </summary>
         [MaxLength(64)]
-        [Required(ErrorMessage = "名称不能为NUll")]
+        [Required(ErrorMessage = "Name Required.")]
         public virtual string Name { get; protected set; }
 
-        ///// <summary>
-        ///// 名称_拼音
-        ///// </summary>
-        //[StringLength(AbpTreeConsts.Name_PinyinMaxLength)]
-        //[MaxLength(AbpTreeConsts.Name_PinyinMaxLength)]
-        //// [Comment("名称_拼音")]
-        //public virtual string Name_Pinyin { get; protected set; }
+        public virtual TKey? ParentId { get; set; }
 
-        ///// <summary>
-        ///// 名称_拼音
-        ///// </summary>
-        //[StringLength(AbpTreeConsts.Name_PYMaxLength)]
-        //[MaxLength(AbpTreeConsts.Name_PYMaxLength)]
-        //// [Comment("名称_拼音")]
-        //public virtual string Name_PY { get; protected set; }
-
-        /// <summary>
-        /// 父级Id
-        /// </summary>
-        // [Comment("父级Id")]
-        public virtual Guid? ParentId { get; protected set; }
-
-        /// <summary>
-        /// 全路径
-        /// </summary>
         [MaxLength(1000)]
         [Required]
-        // [Comment("全路径")]
         public virtual string FullPath { get; protected set; }
 
-        /// <summary>
-        /// 全路径名称
-        /// </summary>
         [MaxLength(1000)]
         [Required]
-        // [Comment("全路径名称")]
         public virtual string FullPathName { get; protected set; }
-
-        ///// <summary>
-        ///// 全路径拼音
-        ///// </summary>
-        //[MaxLength(1000)]
-        //[Required]
-        //// [Comment("全路径拼音")]
-        //public virtual string FullPathPinyin { get; protected set; }
 
         /// <summary>
         /// 层级
         /// </summary>
-        [Range(0, 16)]
-        // [Comment("层级")]
+        [Range(0, 1024)]
         public virtual int Depth { get; protected set; }
 
-        /// <summary>
-        /// 排序（越大越前面） DESC
-        /// </summary>
-        // [Comment("排序（越大越前面） DESC")]
         public virtual double Sorting { get; set; }
 
-        /// <summary>
-        /// 说明
-        /// </summary>
         [MaxLength(500)]
-        // [Comment("说明")]
         public virtual string Description { get; set; }
 
         public virtual int GetChildsCount()
@@ -245,81 +157,61 @@ namespace IczpNet.AbpTrees
 
         }
 
-        protected TreeEntity(Guid id, string name, Guid? parentId) : base(id)
-        {
-            FillCreate(id, name, parentId);
-        }
-
-        public virtual void FillCreate(Guid id, string name, Guid? parentId)
+        protected TreeEntity(TKey id, string name, TKey? parentId) : base(id)
         {
             SetId(id);
             SetParentId(parentId);
             SetName(name);
             SetFullPath(null);
             SetFullPathName(null);
-            //SetFullPathPinyin(null);
         }
 
-        protected virtual void SetParentId(Guid? parentId)
+        public virtual void SetParentId(TKey? parentId)
         {
             ParentId = parentId;
         }
 
-        protected virtual void SetId(Guid id)
+        protected virtual void SetId(TKey id)
         {
             Id = id;
         }
+
         public virtual void SetName(string name)
         {
-            Assert.NotNull(name, $"名称不能为Null");
-
-            Assert.If(name.Contains(AbpTreesConsts.SplitPath), $"名称不能包含\"/\"");
-
             Name = name;
-
-            //Name_PY = name.ConvertToPY().MaxLength(300);
-
-            //Name_Pinyin = name.ConvertToPinyin().MaxLength(300);
         }
 
-        public virtual void SetFullPath(string parentPath)
+        protected virtual void SetFullPath(string parentPath)
         {
             FullPath = parentPath.IsNullOrEmpty() ? $"{Id}" : $"{parentPath}{AbpTreesConsts.SplitPath}{Id}";
         }
 
-        public virtual void SetFullPathName(string parentPathName)
+        protected virtual void SetFullPathName(string parentPathName)
         {
             FullPathName = parentPathName.IsNullOrEmpty() ? $"{Name}" : $"{parentPathName}{AbpTreesConsts.SplitPath}{Name}";
         }
-
-        //internal virtual void SetFullPathPinyin(string parentPathPinyin)
-        //{
-        //    FullPathPinyin = parentPathPinyin.IsNullOrEmpty() ? $"{Name_PY}" : $"{parentPathPinyin}{AbpTreeConsts.SplitPath}{Name_PY}";
-        //}
 
         protected virtual void SetDepth(int depth)
         {
             Depth = depth;
         }
 
-
         public virtual void SetParent(T parent)
         {
             if (parent == null)
             {
+                SetDepth(0);
                 SetFullPath(null);
                 SetFullPathName(null);
-                //SetFullPathPinyin(null);
-                return;
             }
-            Parent = parent;
-
-            Assert.If(Parent.Depth >= AbpTreesConsts.MaxDepth, $"超出最大层级:{AbpTreesConsts.MaxDepth}");
-
-            SetDepth(Parent.Depth + 1);
-            SetFullPath(parent.FullPath);
-            SetFullPathName(parent.FullPathName);
-            //SetFullPathPinyin(parent.FullPathPinyin);
+            else
+            {
+                Parent = parent;
+                Assert.If(Parent.Depth >= AbpTreesConsts.MaxDepth, $"超出最大层级:{AbpTreesConsts.MaxDepth}");
+                SetDepth(Parent.Depth + 1);
+                SetFullPath(parent.FullPath);
+                SetFullPathName(parent.FullPathName);
+            }
         }
     }
 }
@@ -338,30 +230,35 @@ using Volo.Abp.Domain.Services;
 
 namespace IczpNet.AbpTrees
 {
-    //public interface ITreeManager<T, TTreeInfo, TWithChildsOuput, TwithParentOuput> : ITreeManager<T, TTreeInfo, TWithChildsOuput>, IDomainService
-    //    where T : ITreeEntity<T>
-    //    where TTreeInfo : ITreeInfo
-    //    where TWithChildsOuput : ITreeWithChildsInfo<TWithChildsOuput>
-    //    where TwithParentOuput : ITreeWithParentInfo<TwithParentOuput>
-    //{
-    //    Task<TwithParentOuput> GetWithParentAsync(Guid id);
-    //}
-    public interface ITreeManager<T, TTreeInfo, TWithChildsOuput> : ITreeManager<T, TTreeInfo>, IDomainService
-        where T : ITreeEntity<T>
-        where TTreeInfo : ITreeInfo
+    public interface ITreeManager<T, TKey, TTreeInfo, TWithChildsOuput, TwithParentOuput> : ITreeManager<T, TKey, TTreeInfo, TWithChildsOuput>, IDomainService
+        where T : ITreeEntity<TKey>
+        where TKey : struct
+        where TTreeInfo : ITreeInfo<TKey>
+        where TWithChildsOuput : ITreeWithChildsInfo<TWithChildsOuput>
+        where TwithParentOuput : ITreeWithParentInfo<TwithParentOuput>
+    {
+        Task<TwithParentOuput> GetWithParentAsync(TKey id);
+    }
+    public interface ITreeManager<T, TKey, TTreeInfo, TWithChildsOuput> : ITreeManager<T, TKey, TTreeInfo>, IDomainService
+        where T : ITreeEntity<TKey>
+        where TKey : struct
+        where TTreeInfo : ITreeInfo<TKey>
         where TWithChildsOuput : ITreeWithChildsInfo<TWithChildsOuput>
     {
-        Task<List<TWithChildsOuput>> GetAllListWithChildsAsync(Guid? parentId, bool isImportAllChilds = false);
-        Task<List<TWithChildsOuput>> GetRootListAsync(List<Guid> idList);
+        Task<List<TWithChildsOuput>> GetAllListWithChildsAsync(TKey? parentId, bool isImportAllChilds = false);
+        Task<List<TWithChildsOuput>> GetRootListAsync(List<TKey> idList);
     }
-    public interface ITreeManager<T, TTreeOutput> : ITreeManager<T>, IDomainService
-        where T : ITreeEntity<T>
-        where TTreeOutput : ITreeInfo
+    public interface ITreeManager<T, TKey, TTreeOutput> : ITreeManager<T, TKey>, IDomainService
+        where T : ITreeEntity<TKey>
+        where TKey : struct
+        where TTreeOutput : ITreeInfo<TKey>
     {
-        Task<List<TTreeOutput>> GeAllListByCacheAsync();
+        Task<List<TTreeOutput>> GetAllByCacheAsync();
     }
 
-    public interface ITreeManager<T> : IDomainService where T : ITreeEntity<T>
+    public interface ITreeManager<T, TKey> : IDomainService
+        where T : ITreeEntity<TKey>
+        where TKey : struct
     {
         Task RemoveCacheAsync();
         /// <summary>
@@ -369,13 +266,13 @@ namespace IczpNet.AbpTrees
         /// </summary>
         /// <param name="treeEntityIdList"></param>
         /// <returns></returns>
-        Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<Guid> treeEntityIdList);
+        Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<TKey> treeEntityIdList);
         /// <summary>
         /// 查找当前目录及所有子目录
         /// </summary>
         /// <param name="treeEntityIdList"></param>
         /// <returns></returns>
-        Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(Guid treeEntityIdList);
+        Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(TKey treeEntityIdList);
         /// <summary>
         /// 查找当前目录及所有子目录
         /// </summary>
@@ -388,19 +285,21 @@ namespace IczpNet.AbpTrees
         /// <param name="fullPaths"></param>
         /// <returns></returns>
         Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<string> fullPaths);
-        Task<T> FindAsync(Guid id);
-        Task<T> GetAsync(Guid id);
-        Task<List<T>> GetManyAsync(IEnumerable<Guid> idList);
-        //Task<T> CreateAsync(string name, Guid? parentId, long sorting, string description);
+        Task<T> FindAsync(TKey id);
+        Task<T> GetAsync(TKey id);
+        Task<List<T>> GetManyAsync(IEnumerable<TKey> idList);
+        //Task<T> CreateAsync(string name, TKey? parentId, long sorting, string description);
         Task<T> CreateAsync(T entity);
-        Task<T> UpdateAsync(Guid id, string name, Guid? parentId);
-        Task DeleteAsync(Guid id);
+        Task<T> UpdateAsync(T entity);
+        Task DeleteAsync(TKey id);
         /// <summary>
         /// 获取子目录
         /// </summary>
         /// <param name="entityId"></param>
         /// <returns></returns>
-        Task<List<T>> GetChildsAsync(Guid? entityId);
+        Task<List<T>> GetChildsAsync(TKey? entityId);
+
+        Task RepairDataAsync();
     }
 }
 ```
@@ -408,11 +307,12 @@ namespace IczpNet.AbpTrees
 #### TreeManager
 
 ```C#
+using IczpNet.AbpTrees.Statics;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IczpNet.AbpTrees.Statics;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
@@ -420,44 +320,46 @@ using Volo.Abp.ObjectMapping;
 
 namespace IczpNet.AbpTrees
 {
-    //public class TreeManager<T, TOutput, TWithChildsOuput, TWithParentOuput> : TreeManager<T, TOutput, TWithChildsOuput>, ITreeManager<T, TOutput, TWithChildsOuput, TWithParentOuput>
-    //    where T : TreeEntity<T>, new()
-    //    where TOutput : class, ITreeInfo
-    //    where TWithChildsOuput : class, ITreeWithChildsInfo<TWithChildsOuput>
-    //    where TWithParentOuput : class, ITreeWithParentInfo<TWithParentOuput>
-    //{
-    //    public TreeManager(IRepository<T, Guid> repository) : base(repository) { }
+    public class TreeManager<T, TKey, TOutput, TWithChildsOuput, TWithParentOuput> : TreeManager<T, TKey, TOutput, TWithChildsOuput>, ITreeManager<T, TKey, TOutput, TWithChildsOuput, TWithParentOuput>
+         where T : class, ITreeEntity<T, TKey>
+        where TKey : struct
+        where TOutput : class, ITreeInfo<TKey>
+        where TWithChildsOuput : class, ITreeWithChildsInfo<TWithChildsOuput>
+        where TWithParentOuput : class, ITreeWithParentInfo<TWithParentOuput>
+    {
+        public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
-    //    public async Task<TWithParentOuput> GetWithParentAsync(Guid id)
-    //    {
-    //        var entity = await GetAsync(id);
-    //        return ObjectMapper.Map<T, TWithParentOuput>(entity);
-    //    }
-    //}
-    public class TreeManager<T, TOutput, TWithChildsOuput> : TreeManager<T, TOutput>, ITreeManager<T, TOutput, TWithChildsOuput>
-        where T : TreeEntity<T>
-        where TOutput : class, ITreeInfo
+        public async Task<TWithParentOuput> GetWithParentAsync(TKey id)
+        {
+            var entity = await GetAsync(id);
+            return ObjectMapper.Map<T, TWithParentOuput>(entity);
+        }
+    }
+    public class TreeManager<T, TKey, TOutput, TWithChildsOuput> : TreeManager<T, TKey, TOutput>, ITreeManager<T, TKey, TOutput, TWithChildsOuput>
+         where T : class, ITreeEntity<T, TKey>
+        where TKey : struct
+        where TOutput : class, ITreeInfo<TKey>
         where TWithChildsOuput : class, ITreeWithChildsInfo<TWithChildsOuput>
     {
-        public TreeManager(IRepository<T, Guid> repository) : base(repository) { }
+        public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
         public override Task RemoveCacheAsync()
         {
             return Cache.RemoveAsync(CacheKey);
         }
 
-        public virtual async Task<List<TWithChildsOuput>> GetAllListWithChildsAsync(Guid? parentId, bool isImportAllChilds = false)
+        public virtual async Task<List<TWithChildsOuput>> GetAllListWithChildsAsync(TKey? parentId, bool isImportAllChilds = false)
         {
-            var allList = await GeAllListByCacheAsync();
+            var allList = await GetAllByCacheAsync();
 
             return await GetChildsAsync(allList, parentId, isImportAllChilds);
         }
 
-        private async Task<List<TWithChildsOuput>> GetChildsAsync(List<TOutput> allList, Guid? parentId, bool isImportAllChilds)
+        private async Task<List<TWithChildsOuput>> GetChildsAsync(List<TOutput> allList, TKey? parentId, bool isImportAllChilds)
         {
             var list = new List<TWithChildsOuput>();
 
-            foreach (var treeInfo in allList.Where(x => x.ParentId == parentId).ToList())
+            foreach (var treeInfo in allList.Where(x => x.ParentId.Equals(parentId) ).ToList())
             {
                 var item = ObjectMapper.Map<TOutput, TWithChildsOuput>(treeInfo);
 
@@ -470,7 +372,7 @@ namespace IczpNet.AbpTrees
             return list;
         }
 
-        public virtual async Task<List<TWithChildsOuput>> GetRootListAsync(List<Guid> idList)
+        public virtual async Task<List<TWithChildsOuput>> GetRootListAsync(List<TKey> idList)
         {
             var rootList = (await Repository.GetQueryableAsync())
                .Where(x => x.ParentId == null)
@@ -481,22 +383,23 @@ namespace IczpNet.AbpTrees
         }
     }
 
-    public class TreeManager<T, TOutput> : TreeManager<T>, ITreeManager<T, TOutput>
-        where T : TreeEntity<T>
-        where TOutput : class, ITreeInfo
+    public class TreeManager<T, TKey, TOutput> : TreeManager<T, TKey>, ITreeManager<T, TKey, TOutput>
+        where T : class, ITreeEntity<T, TKey>
+        where TKey : struct
+        where TOutput : class, ITreeInfo<TKey>
     {
-        
+
         protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetRequiredService<IObjectMapper>();
         protected IDistributedCache<List<TOutput>> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<List<TOutput>>>();
 
-        public TreeManager(IRepository<T, Guid> repository) : base(repository) { }
+        public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
         public override Task RemoveCacheAsync()
         {
             return Cache.RemoveAsync(CacheKey);
         }
 
-        public virtual Task<List<TOutput>> GeAllListByCacheAsync()
+        public virtual Task<List<TOutput>> GetAllByCacheAsync()
         {
             return Cache.GetOrAddAsync(CacheKey, async () =>
             {
@@ -514,17 +417,18 @@ namespace IczpNet.AbpTrees
     }
 
 
-    public class TreeManager<T> : DomainService, ITreeManager<T>
-        where T : TreeEntity<T>
+    public class TreeManager<T, TKey> : DomainService, ITreeManager<T, TKey>
+        where T : class, ITreeEntity<T, TKey>
+        where TKey : struct
     {
         public virtual string CacheKey => typeof(T).FullName;
-        public IRepository<T, Guid> Repository { get; }
-        public TreeManager(IRepository<T, Guid> repository)
+        public IRepository<T, TKey> Repository { get; }
+        public TreeManager(IRepository<T, TKey> repository)
         {
             Repository = repository;
         }
 
-        public virtual async Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<Guid> departmentIdList)
+        public virtual async Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<TKey> departmentIdList)
         {
             var fullPathsQueryable = (await Repository.GetQueryableAsync())
                 .Where(x => departmentIdList.Contains(x.Id))
@@ -558,9 +462,9 @@ namespace IczpNet.AbpTrees
             return QueryCurrentAndAllChildsAsync(new List<string>() { fullPath });
         }
 
-        public virtual Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(Guid departmentId)
+        public virtual Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(TKey departmentId)
         {
-            return QueryCurrentAndAllChildsAsync(new List<Guid>() { departmentId });
+            return QueryCurrentAndAllChildsAsync(new List<TKey>() { departmentId });
         }
 
         public virtual Task RemoveCacheAsync()
@@ -569,17 +473,17 @@ namespace IczpNet.AbpTrees
             return Task.CompletedTask;
         }
 
-        public virtual Task<T> FindAsync(Guid id)
+        public virtual Task<T> FindAsync(TKey id)
         {
             return Repository.FindAsync(id);
         }
 
-        public virtual Task<T> GetAsync(Guid id)
+        public virtual Task<T> GetAsync(TKey id)
         {
             return Repository.GetAsync(id);
         }
 
-        public virtual Task<List<T>> GetManyAsync(IEnumerable<Guid> idList)
+        public virtual Task<List<T>> GetManyAsync(IEnumerable<TKey> idList)
         {
             return Repository.GetListAsync(x => idList.Contains(x.Id));
         }
@@ -588,52 +492,44 @@ namespace IczpNet.AbpTrees
         {
             Assert.If(await Repository.CountAsync(x => x.Name == inputEntity.Name) > 0, $"Already exists:{inputEntity.Name}");
 
-            //inputEntity.SetId(GuidGenerator.Create());
-
-            //inputEntity.SetName((string)inputEntity.Name);
-
-            //inputEntity.SetFullPath((string)null);
-
-            //inputEntity.SetFullPathName((string)null);
-
-            //inputEntity.SetFullPathPinyin((string)null);
-
-            var entity = await Repository.InsertAsync(inputEntity, autoSave: true);
-
             if (inputEntity.ParentId.HasValue)
             {
-                var parent = await Repository.GetAsync((Guid)inputEntity.ParentId.Value);
+                var parent = await Repository.GetAsync(inputEntity.ParentId.Value);
 
-                Assert.NotNull((T)parent, $"No such parent entity:{inputEntity.ParentId}");
+                Assert.NotNull(parent, $"No such parent entity:{inputEntity.ParentId}");
 
-                entity.SetParent((T)parent);
+                inputEntity.SetParent(parent);
             }
             else
             {
-                entity.SetParent((T)null);
+                inputEntity.SetParent(null);
             }
+
+            var entity = await Repository.InsertAsync(inputEntity, autoSave: true);
 
             await RemoveCacheAsync();
 
             return entity;
         }
 
-        public virtual async Task<T> UpdateAsync(Guid id, string name, Guid? parentId)
+        public virtual async Task<T> UpdateAsync(T entity)
         {
-            Assert.If(await Repository.CountAsync(x => x.Name == name && x.Id != id) > 0, $"{name} 已经存在");
+            Assert.NotNull(entity, $"an entity is no such.");
 
-            var entity = await Repository.FindAsync(id);
+            Assert.NotNull(entity.Name, $"[Name] cannot be null.");
 
-            Assert.NotNull(entity, $"目录不存在");
+            Assert.If(entity.Name.Contains(AbpTreesConsts.SplitPath), $"[Name] cannot contains char:\"/\"");
 
-            entity.SetName(name);
+            Assert.If(await Repository.CountAsync(x => x.Name == entity.Name && !x.Id.Equals(entity.Id)) > 0, $" Name[{entity.Name}] already such.");
 
-            if (parentId.HasValue)
+            //entity.SetName(entity.Name);
+
+            if (entity.ParentId.HasValue)
             {
                 //变更上级
-                var parent = await Repository.GetAsync(parentId.Value);
+                var parent = await Repository.GetAsync(entity.ParentId.Value);
 
-                Assert.NotNull(parent, $"上级目录不存在");
+                Assert.NotNull(parent, $"[Parent] is no such.");
 
                 entity.SetParent(parent);
             }
@@ -642,7 +538,7 @@ namespace IczpNet.AbpTrees
                 entity.SetParent(null);
             }
 
-            //变更子集
+            //update childs
             await ChangeChildsAsync(entity);
 
             await RemoveCacheAsync();
@@ -650,36 +546,59 @@ namespace IczpNet.AbpTrees
             return entity;
         }
 
-        protected virtual async Task ChangeChildsAsync(T department)
+        protected virtual async Task ChangeChildsAsync(T entiy)
         {
-            foreach (var dep in department.Childs)
-            {
-                dep.SetParent(department);
+            Logger.LogInformation($"ChangeChilds id:{entiy.Id}");
 
-                await ChangeChildsAsync(dep);
+            foreach (var item in entiy.Childs)
+            {
+                item.SetParent(entiy);
+
+                await ChangeChildsAsync(item);
             }
         }
 
-        public virtual async Task DeleteAsync(Guid id)
+        public virtual async Task DeleteAsync(TKey id)
         {
             var entity = await Repository.GetAsync(id);
 
             var childCount = entity.Childs.Count();
 
-            Assert.If(childCount > 0, $"有 {childCount} 个子目录,不能删除");
+            Assert.If(childCount > 0, $"Has ({childCount}) childs, cannot delete.");
 
             await Repository.DeleteAsync(entity);
 
             await RemoveCacheAsync();
         }
 
-        public async Task<List<T>> GetChildsAsync(Guid? entityId)
+        public async Task<List<T>> GetChildsAsync(TKey? entityId)
         {
             //return await Repository.GetListAsync(x => x.ParentId == departmentId);
             return (await Repository.GetQueryableAsync())
-                .Where(x => x.ParentId == entityId)
+                .Where(x => x.ParentId.Equals(entityId))
                 .OrderByDescending(x => x.Sorting)
                 .ToList();
+        }
+
+        public virtual async Task RepairDataAsync()
+        {
+            var list = await Repository.GetListAsync(x => x.ParentId == null);
+
+            foreach (var entity in list)
+            {
+                await SetEntityAsync(entity);
+
+                await UpdateAsync(entity);
+            }
+        }
+
+        protected virtual Task SetEntityAsync(T entity)
+        {
+            Logger.LogInformation($"SetEntityAsync:{entity}");
+
+            entity.SetName(entity.Name);
+
+            return Task.CompletedTask;
         }
     }
 }
@@ -696,40 +615,16 @@ using System.Threading.Tasks;
 
 namespace IczpNet.AbpTrees
 {
-    public interface ITreeAppService<
-        TTreeInfo,
-        TTreeWithChildsDto,
-        TTreeWithParentDto>
-        :
-        ITreeAppService<TTreeInfo, TTreeWithChildsDto>
-        where TTreeInfo : ITreeInfo
-        where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
-        where TTreeWithParentDto : ITreeWithParentInfo<TTreeWithParentDto>
+    public interface ITreeAppService<TKey, TTreeInfo> : ITreeAppService<TKey>
+        where TKey : struct
+        where TTreeInfo : ITreeInfo<TKey>
     {
-        Task<TTreeWithParentDto> GetWithParentAsync(Guid id);
+        Task<List<TTreeInfo>> GetAllByCacheAsync();
     }
 
-    public interface ITreeAppService<
-        TTreeInfo,
-        TTreeWithChildsDto>
-        :
-        ITreeAppService<TTreeInfo>
-        where TTreeInfo : ITreeInfo
-        where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
+    public interface ITreeAppService<TKey> where TKey : struct
     {
-        Task<List<TTreeWithChildsDto>> GetAllListWithChildsAsync(Guid? ParentId, bool IsImportAllChilds);
-        Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> idList);
-    }
-
-    public interface ITreeAppService<TTreeInfo> : ITreeAppService
-        where TTreeInfo : ITreeInfo
-    {
-        Task<List<TTreeInfo>> GeAllListByCacheAsync();
-    }
-
-    public interface ITreeAppService
-    {
-
+        Task<DateTime> RepairDataAsync();
     }
 }
 
@@ -740,17 +635,15 @@ namespace IczpNet.AbpTrees
 #### ITreeGetListInput
 
 ```C#
-using System;
-
-namespace IczpNet.AbpTrees
+namespace IczpNet.AbpTrees.Dtos
 {
-    public interface ITreeGetListInput
+    public interface ITreeGetListInput<TKey> where TKey : struct
     {
         bool IsEnabledParentId { get; set; }
 
         int? Depth { get; set; }
 
-        Guid? ParentId { get; set; }
+        TKey? ParentId { get; set; }
 
         string Keyword { get; set; }
     }
@@ -765,10 +658,10 @@ using System;
 
 namespace IczpNet.AbpTrees.Dtos
 {
-    public interface ITreeInput
+    public interface ITreeInput<TKey> where TKey : struct
     {
         string Name { get; set; }
-        Guid? ParentId { get; set; }
+        TKey? ParentId { get; set; }
     }
 }
 ```
@@ -776,13 +669,12 @@ namespace IczpNet.AbpTrees.Dtos
 #### TreeGetListInput
 
 ```C#
-using System;
 using System.ComponentModel;
 using Volo.Abp.Application.Dtos;
 
 namespace IczpNet.AbpTrees.Dtos
 {
-    public class TreeGetListInput : PagedAndSortedResultRequestDto, ITreeGetListInput
+    public class TreeGetListInput<TKey> : PagedAndSortedResultRequestDto, ITreeGetListInput<TKey> where TKey : struct
     {
         [DefaultValue(false)]
         public virtual bool IsEnabledParentId { get; set; }
@@ -791,7 +683,7 @@ namespace IczpNet.AbpTrees.Dtos
         public virtual int? Depth { get; set; }
 
         [DefaultValue(null)]
-        public virtual Guid? ParentId { get; set; }
+        public virtual TKey? ParentId { get; set; }
 
         [DefaultValue(null)]
         public virtual string Keyword { get; set; }
@@ -818,170 +710,83 @@ using Volo.Abp.Domain.Repositories;
 
 namespace IczpNet.AbpTrees
 {
+
     public abstract class TreeAppService<
-        TEntity, 
-        TGetOutputDto, 
-        TGetListOutputDto, 
-        TGetListInput, 
-        TCreateInput, 
-        TUpdateInput, 
-        TTreeInfo, 
-        TTreeWithChildsDto, 
-        TTreeWithParentDto>
-        : 
-        TreeAppService<
-            TEntity, 
-            TGetOutputDto, 
-            TGetListOutputDto, 
-            TGetListInput, 
-            TCreateInput, 
-            TUpdateInput, 
-            TTreeInfo, 
-            TTreeWithChildsDto>
-        , 
-        ITreeAppService<
-        TTreeInfo, 
-        TTreeWithChildsDto, 
-        TTreeWithParentDto>
-        where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
-        where TGetOutputDto : IEntityDto<Guid>
-        where TGetListOutputDto : IEntityDto<Guid>
-        where TGetListInput : ITreeGetListInput
-        where TCreateInput : ITreeInput
-        where TUpdateInput : ITreeInput
-        where TTreeInfo : ITreeInfo
-        where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
-        where TTreeWithParentDto : ITreeWithParentInfo<TTreeWithParentDto>
-    {
-        //protected override ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto> TreeManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto>>();
-        protected TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
-
-        [HttpGet]
-        public virtual async Task<TTreeWithParentDto> GetWithParentAsync(Guid id)
-        {
-            await CheckGetPolicyAsync();
-
-            var entity = await base.GetEntityByIdAsync(id);
-
-            return ObjectMapper.Map<TEntity, TTreeWithParentDto>(entity);
-        }
-    }
-    public abstract class TreeAppService<
-        TEntity, 
-        TGetOutputDto, 
-        TGetListOutputDto, 
-        TGetListInput, 
-        TCreateInput, 
-        TUpdateInput, 
-        TTreeInfo, 
-        TTreeWithChildsDto>
-        : 
-        TreeAppService<
-            TEntity, 
-            TGetOutputDto, 
-            TGetListOutputDto, 
-            TGetListInput, 
-            TCreateInput, 
-            TUpdateInput, 
-            TTreeInfo>
-        , 
-        ITreeAppService<
-        TTreeInfo, 
-        TTreeWithChildsDto>
-        where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
-        where TGetOutputDto : IEntityDto<Guid>
-        where TGetListOutputDto : IEntityDto<Guid>
-        where TGetListInput : ITreeGetListInput
-        where TCreateInput : ITreeInput
-        where TUpdateInput : ITreeInput
-        where TTreeInfo : ITreeInfo
-        where TTreeWithChildsDto : ITreeWithChildsInfo<TTreeWithChildsDto>
-    {
-        protected  ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto> TreeWithChildsManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TTreeInfo, TTreeWithChildsDto>>();
-        protected TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
-
-        [HttpGet]
-        public virtual async Task<List<TTreeWithChildsDto>> GetAllListWithChildsAsync(Guid? ParentId, bool IsImportAllChilds)
-        {
-            await CheckGetListPolicyAsync();
-
-            return await TreeWithChildsManager.GetAllListWithChildsAsync(ParentId, IsImportAllChilds);
-        }
-        [HttpGet]
-        public virtual async Task<List<TTreeWithChildsDto>> GetRootListAsync(List<Guid> idList)
-        {
-            await CheckGetPolicyAsync();
-
-            return await TreeWithChildsManager.GetRootListAsync(idList);
-        }
-    }
-    public abstract class TreeAppService<
-        TEntity, 
-        TGetOutputDto, 
-        TGetListOutputDto, 
-        TGetListInput, 
-        TCreateInput, 
-        TUpdateInput, 
+        TEntity,
+        TKey,
+        TGetOutputDto,
+        TGetListOutputDto,
+        TGetListInput,
+        TCreateInput,
+        TUpdateInput,
         TTreeInfo>
-        : 
+        :
         TreeAppService<
-            TEntity, 
-            TGetOutputDto, 
-            TGetListOutputDto, 
-            TGetListInput, 
-            TCreateInput, 
+            TEntity,
+            TKey,
+            TGetOutputDto,
+            TGetListOutputDto,
+            TGetListInput,
+            TCreateInput,
             TUpdateInput>
-        , 
-        ITreeAppService<TTreeInfo>
-        where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
-        where TGetOutputDto : IEntityDto<Guid>
-        where TGetListOutputDto : IEntityDto<Guid>
-        where TGetListInput : ITreeGetListInput
-        where TCreateInput : ITreeInput
-        where TUpdateInput : ITreeInput
-        where TTreeInfo : ITreeInfo
+        ,
+        ITreeAppService<TKey, TTreeInfo>
+        where TEntity : class, ITreeEntity<TEntity, TKey>
+        where TKey : struct
+        where TGetOutputDto : IEntityDto<TKey>
+        where TGetListOutputDto : IEntityDto<TKey>
+        where TGetListInput : ITreeGetListInput<TKey>
+        where TCreateInput : ITreeInput<TKey>
+        where TUpdateInput : ITreeInput<TKey>
+        where TTreeInfo : ITreeInfo<TKey>
+
     {
-        protected  ITreeManager<TEntity, TTreeInfo> TreeCacheManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TTreeInfo>>();
-        protected TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
+        protected ITreeManager<TEntity, TKey, TTreeInfo> TreeCacheManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TKey, TTreeInfo>>();
+        protected TreeAppService(IRepository<TEntity, TKey> repository) : base(repository) { }
 
 
         [HttpGet]
-        public virtual async Task<List<TTreeInfo>> GeAllListByCacheAsync()
+        public virtual async Task<List<TTreeInfo>> GetAllByCacheAsync()
         {
             await CheckGetListPolicyAsync();
 
-            return await TreeCacheManager.GeAllListByCacheAsync();
+            return await TreeCacheManager.GetAllByCacheAsync();
         }
     }
 
 
     public abstract class TreeAppService<
-        TEntity, 
-        TGetOutputDto, 
-        TGetListOutputDto, 
-        TGetListInput, 
-        TCreateInput, 
+        TEntity,
+        TKey,
+        TGetOutputDto,
+        TGetListOutputDto,
+        TGetListInput,
+        TCreateInput,
         TUpdateInput>
-        : 
+        :
         CrudAppService<
-            TEntity, 
-            TGetOutputDto, 
-            TGetListOutputDto, 
-            Guid, 
-            TGetListInput, 
-            TCreateInput, 
-            TUpdateInput>
-        //:ITreeAppService<TTreeInfo, TTreeWithChildsDto, TTreeWithParentDto>
-    where TEntity : class, ITreeEntity<TEntity>, ITreeEntity
-    where TGetOutputDto : IEntityDto<Guid>
-    where TGetListOutputDto : IEntityDto<Guid>
-    where TGetListInput : ITreeGetListInput
-    where TCreateInput : ITreeInput
-    where TUpdateInput : ITreeInput
-    {
-        protected virtual ITreeManager<TEntity> TreeManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity>>();
+            TEntity,
+            TGetOutputDto,
+            TGetListOutputDto,
+            TKey,
+            TGetListInput,
+            TCreateInput,
+            TUpdateInput>,
+        ITreeAppService<TKey>
+        where TEntity : class, ITreeEntity<TEntity, TKey>
+        where TKey : struct
+        where TGetOutputDto : IEntityDto<TKey>
+        where TGetListOutputDto : IEntityDto<TKey>
+        where TGetListInput : ITreeGetListInput<TKey>
+        where TCreateInput : ITreeInput<TKey>
+        where TUpdateInput : ITreeInput<TKey>
 
-        public TreeAppService(IRepository<TEntity, Guid> repository) : base(repository) { }
+    {
+        protected virtual string RepairDataPolicyName { get; set; }
+
+        protected virtual ITreeManager<TEntity, TKey> TreeManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TKey>>();
+
+        public TreeAppService(IRepository<TEntity, TKey> repository) : base(repository) { }
 
         protected override IQueryable<TEntity> ApplyDefaultSorting(IQueryable<TEntity> query)
         {
@@ -989,7 +794,7 @@ namespace IczpNet.AbpTrees
         }
 
         [HttpGet]
-        public override Task<TGetOutputDto> GetAsync(Guid id)
+        public override Task<TGetOutputDto> GetAsync(TKey id)
         {
             return base.GetAsync(id);
         }
@@ -1006,8 +811,8 @@ namespace IczpNet.AbpTrees
 
             return (await base.CreateFilteredQueryAsync(input))
                 .WhereIf(input.Depth.HasValue, x => x.Depth == input.Depth)
-                .WhereIf(input.IsEnabledParentId, x => x.ParentId == input.ParentId)
-                .WhereIf(!string.IsNullOrWhiteSpace(input.Keyword), x => x.Name.Contains(input.Keyword))
+                .WhereIf(input.IsEnabledParentId, x => x.ParentId.Equals(input.ParentId))
+               //.WhereIf(!string.IsNullOrWhiteSpace(input.Keyword), x => x.Name.Contains(input.Keyword))
                ;
         }
 
@@ -1019,7 +824,9 @@ namespace IczpNet.AbpTrees
 
             var inputEntity = MapToEntity(input);
 
-            inputEntity.FillCreate(GuidGenerator.Create(), input.Name, input.ParentId);
+            inputEntity.SetName(input.Name);
+
+            inputEntity.SetParentId(input.ParentId);
 
             var entity = await TreeManager.CreateAsync(inputEntity);
 
@@ -1027,23 +834,44 @@ namespace IczpNet.AbpTrees
         }
 
         [HttpPost]
-        public override async Task<TGetOutputDto> UpdateAsync(Guid id, TUpdateInput input)
+        public override async Task<TGetOutputDto> UpdateAsync(TKey id, TUpdateInput input)
         {
             await CheckUpdatePolicyAsync();
 
-            var entity = await TreeManager.UpdateAsync(id, input.Name, input.ParentId);
+            var entity = await GetEntityByIdAsync(id);
 
             await MapToEntityAsync(input, entity);
+
+            entity.SetName(input.Name);
+
+            entity.SetParentId(input.ParentId);
+
+            await TreeManager.UpdateAsync(entity);
 
             return await MapToGetOutputDtoAsync(entity);
         }
 
         [HttpPost]
-        public override async Task DeleteAsync(Guid id)
+        public override async Task DeleteAsync(TKey id)
         {
             await CheckDeletePolicyAsync();
 
             await TreeManager.DeleteAsync(id);
+        }
+
+        [HttpPost]
+        public virtual async Task<DateTime> RepairDataAsync()
+        {
+            await CheckRepairDataPolicyAsync();
+
+            await TreeManager.RepairDataAsync();
+
+            return Clock.Now;
+        }
+
+        protected virtual async Task CheckRepairDataPolicyAsync()
+        {
+            await CheckPolicyAsync(RepairDataPolicyName);
         }
     }
 }
@@ -1060,10 +888,11 @@ namespace IczpNet.AbpTrees
 
    ```c#
    using IczpNet.AbpTrees;
+   using System;
    
    namespace IczpNet.AbpTreesDemo.Departments
    {
-       public class Department : TreeEntity<Department>
+       public class Department : TreeEntity<Department, Guid>
        {
        }
    }
@@ -1076,10 +905,11 @@ namespace IczpNet.AbpTrees
 
    ```C#
    using IczpNet.AbpTrees;
+   using System;
    
    namespace IczpNet.AbpTreesDemo.Departments
    {
-       public class DepartmentInfo : TreeInfo
+       public class DepartmentInfo : TreeInfo<Guid>
        {
        }
    }
@@ -1174,12 +1004,14 @@ namespace IczpNet.AbpTrees
 
 ```C#
 using IczpNet.AbpTrees.Dtos;
+using System;
+
 namespace IczpNet.AbpTreesDemo.Departments.Dtos;
 
 /// <summary>
 /// DepartmentCreateInput
 /// </summary>
-public class DepartmentCreateInput : DepartmentUpdateInput, ITreeInput
+public class DepartmentCreateInput : DepartmentUpdateInput, ITreeInput<Guid>
 {
 
 }
@@ -1189,25 +1021,14 @@ public class DepartmentCreateInput : DepartmentUpdateInput, ITreeInput
 2. `DepartmentDto.cs`
 
 ```C#
-using IczpNet.AbpTreesDemo.Departments;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace IczpNet.AbpTreesDemo.Departments.Dtos
 {
-    /// <summary>
-    /// DepartmentDto
-    /// </summary>
     public class DepartmentDto : DepartmentInfo, IEntityDto<Guid>
     {
-        /// <summary>
-        /// 排序（越大越前面） DESC
-        /// </summary>
         public virtual double Sorting { get; set; }
-        /// <summary>
-        /// 说明
-        /// </summary>
-
         public virtual string Description { get; set; }
     }
 }
@@ -1222,20 +1043,10 @@ using System.ComponentModel;
 
 namespace IczpNet.AbpTreesDemo.Departments.Dtos;
 
-/// <summary>
-/// DepartmentGetListInput
-/// </summary>
 public class DepartmentGetAllListWithChildsInput 
 {
-
-    /// <summary>
-    /// 上级部门
-    /// </summary>
     [DefaultValue(null)]
     public virtual Guid? ParentId { get; set; }
-    /// <summary>
-    /// 是否包含所有子集
-    /// </summary>
     public virtual bool IsImportAllChilds { get; set; }
 }
 
@@ -1244,19 +1055,15 @@ public class DepartmentGetAllListWithChildsInput
 4. `DepartmentGetListInput.cs`
 
 ```C#
-using IczpNet.AbpTrees;
 using IczpNet.AbpTrees.Dtos;
+using System;
 
 namespace IczpNet.AbpTreesDemo.Departments.Dtos;
 
-/// <summary>
-/// DepartmentGetListInput
-/// </summary>
-public class DepartmentGetListInput : TreeGetListInput, ITreeGetListInput
+public class DepartmentGetListInput : TreeGetListInput<Guid>
 {
 
 }
-
 
 ```
 
@@ -1268,27 +1075,11 @@ using System;
 
 namespace IczpNet.AbpTreesDemo.Departments.Dtos;
 
-/// <summary>
-/// DepartmentUpdateInput
-/// </summary>
-public class DepartmentUpdateInput : ITreeInput
+public class DepartmentUpdateInput : ITreeInput<Guid>
 {
-
-    /// <summary>
-    /// 上级部门
-    /// </summary>
     public virtual Guid? ParentId { get; set; }
-    /// <summary>
-    /// 名称
-    /// </summary>
     public virtual string Name { get; set; }
-    /// <summary>
-    /// 排序（越大越前面） DESC
-    /// </summary>
     public virtual double Sorting { get; set; }
-    /// <summary>
-    /// 说明
-    /// </summary>
     public virtual string Description { get; set; }
 
 }
@@ -1299,13 +1090,11 @@ public class DepartmentUpdateInput : ITreeInput
 
 ```C#
 using IczpNet.AbpTrees;
+using System;
 
 namespace IczpNet.AbpTreesDemo.Departments.Dtos;
 
-/// <summary>
-/// DepartmentWithChildsDto
-/// </summary>
-public class DepartmentWithChildsDto : TreeWithChildsInfo<DepartmentWithChildsDto>
+public class DepartmentWithChildsDto : TreeWithChildsInfo<DepartmentWithChildsDto, Guid>
 {
     public virtual int ChildsCount { get; set; }
 }
@@ -1316,21 +1105,13 @@ public class DepartmentWithChildsDto : TreeWithChildsInfo<DepartmentWithChildsDt
 
 ```C#
 using IczpNet.AbpTrees;
+using System;
 
 namespace IczpNet.AbpTreesDemo.Departments.Dtos;
 
-/// <summary>
-/// DepartmentWithParentDto
-/// </summary>
-public class DepartmentWithParentDto : TreeWithParentInfo<DepartmentWithParentDto>
+public class DepartmentWithParentDto : TreeWithParentInfo<DepartmentWithParentDto, Guid>
 {
-    /// <summary>
-    /// 排序（越大越前面） DESC
-    /// </summary>
     public virtual double Sorting { get; set; }
-    /// <summary>
-    /// 说明
-    /// </summary>
     public virtual string Description { get; set; }
 }
 
@@ -1358,14 +1139,10 @@ namespace IczpNet.AbpTreesDemo.Departments
             DepartmentGetListInput,
             DepartmentCreateInput,
             DepartmentUpdateInput>
-        , ITreeAppService<
-            DepartmentInfo,
-            DepartmentWithChildsDto,
-            DepartmentWithParentDto>
+        , ITreeAppService<Guid, DepartmentInfo>
     {
     }
 }
-
 
 ```
 
