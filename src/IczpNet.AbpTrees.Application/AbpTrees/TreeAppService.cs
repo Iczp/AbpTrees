@@ -111,7 +111,7 @@ namespace IczpNet.AbpTrees
             Assert.If(!input.IsEnabledParentId && input.ParentId != null, "When [IsEnabledParentId]=false,then [ParentId] != null");
 
             return (await base.CreateFilteredQueryAsync(input))
-                .WhereIf(input.Depth.HasValue, x => x.Depth == input.Depth)
+                .WhereIf(input.DepthList != null && input.DepthList.Any(), x => input.DepthList.Contains(x.Depth))
                 .WhereIf(input.IsEnabledParentId, x => x.ParentId.Equals(input.ParentId))
                //.WhereIf(!string.IsNullOrWhiteSpace(input.Keyword), x => x.Name.Contains(input.Keyword))
                ;
