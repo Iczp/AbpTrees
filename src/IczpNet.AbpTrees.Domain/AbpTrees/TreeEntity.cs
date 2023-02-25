@@ -51,6 +51,7 @@ namespace IczpNet.AbpTrees
         /// <summary>
         /// 子集合
         /// </summary>
+        [InverseProperty(nameof(Parent))]
         public virtual IEnumerable<T> Childs { get; protected set; }
 
         protected TreeEntity()
