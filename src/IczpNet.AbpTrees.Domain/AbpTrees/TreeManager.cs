@@ -50,7 +50,7 @@ namespace IczpNet.AbpTrees
         {
             var list = new List<TWithChildsOuput>();
 
-            foreach (var treeInfo in allList.Where(x => x.ParentId.Equals(parentId) ).ToList())
+            foreach (var treeInfo in allList.Where(x => x.ParentId.Equals(parentId)).ToList())
             {
                 var item = ObjectMapper.Map<TOutput, TWithChildsOuput>(treeInfo);
 
@@ -82,7 +82,7 @@ namespace IczpNet.AbpTrees
 
         protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetRequiredService<IObjectMapper>();
         protected IDistributedCache<List<TOutput>> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<List<TOutput>>>();
-
+        protected IDistributedCache<TOutput> ItemCache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<TOutput>>();
         public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
         public override Task RemoveCacheAsync()
@@ -104,6 +104,28 @@ namespace IczpNet.AbpTrees
                 }
                 return await Task.FromResult(result);
             });
+        }
+
+        public virtual Task<TOutput> GetItemByCacheAsync(TKey id)
+        {
+            return ItemCache.GetOrAddAsync(id.ToString(), async () =>
+            {
+                var entity = await GetAsync(id);
+
+                return ObjectMapper.Map<T, TOutput>(entity);
+            });
+        }
+
+        public virtual async Task<List<TOutput>> GetManyByCacheAsync(List<TKey> idList)
+        {
+            var list = new List<TOutput>();
+
+            foreach (var id in idList)
+            {
+                list.Add(await GetItemByCacheAsync(id));
+            }
+
+            return list;
         }
     }
 
@@ -174,9 +196,26 @@ namespace IczpNet.AbpTrees
             return Repository.GetAsync(id);
         }
 
-        public virtual Task<List<T>> GetManyAsync(IEnumerable<TKey> idList)
+        public async Task<List<T>> GetManyAsync(List<TKey> idList)
         {
-            return Repository.GetListAsync(x => idList.Contains(x.Id));
+            var list = new List<T>();
+
+            foreach (var id in idList)
+            {
+                list.Add(await GetAsync(id));
+            }
+            return list;
+        }
+
+        public virtual async Task<List<T>> GetManyAsync(IEnumerable<TKey> idList)
+        {
+            var list = new List<T>();
+
+            foreach (var id in idList)
+            {
+                list.Add(await GetAsync(id));
+            }
+            return list;
         }
 
         public virtual async Task<T> CreateAsync(T inputEntity)

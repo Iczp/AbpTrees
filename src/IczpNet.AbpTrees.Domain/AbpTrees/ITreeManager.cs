@@ -30,6 +30,10 @@ namespace IczpNet.AbpTrees
         where TTreeOutput : ITreeInfo<TKey>
     {
         Task<List<TTreeOutput>> GetAllByCacheAsync();
+
+        Task<TTreeOutput> GetItemByCacheAsync(TKey id);
+
+        Task<List<TTreeOutput>> GetManyByCacheAsync(List<TKey> idList);
     }
 
     public interface ITreeManager<T, TKey> : IDomainService
