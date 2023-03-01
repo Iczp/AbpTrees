@@ -122,9 +122,17 @@ namespace IczpNet.AbpTrees
 
             foreach (var id in idList)
             {
-                list.Add(await GetItemByCacheAsync(id));
-            }
+                var entity = await GetItemByCacheAsync(id);
 
+                if (entity != null)
+                {
+                    list.Add(entity);
+                }
+                else
+                {
+                    Logger.LogWarning($"[{nameof(GetManyByCacheAsync)}] No such entity[{typeof(TOutput)}] by id:${id}");
+                }
+            }
             return list;
         }
     }
@@ -218,9 +226,9 @@ namespace IczpNet.AbpTrees
             return list;
         }
 
-        public virtual async Task<T> CreateAsync(T inputEntity)
+        public virtual async Task<T> CreateAsync(T inputEntity, bool isUnique = true)
         {
-            Assert.If(await Repository.CountAsync(x => x.Name == inputEntity.Name) > 0, $"Already exists:{inputEntity.Name}");
+            Assert.If(isUnique && await Repository.CountAsync(x => x.Name == inputEntity.Name) > 0, $"Already exists:{inputEntity.Name}");
 
             if (inputEntity.ParentId.HasValue)
             {

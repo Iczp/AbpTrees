@@ -69,7 +69,7 @@ namespace IczpNet.AbpTrees
         Task<T> GetAsync(TKey id);
         Task<List<T>> GetManyAsync(IEnumerable<TKey> idList);
         //Task<T> CreateAsync(string name, TKey? parentId, long sorting, string description);
-        Task<T> CreateAsync(T entity);
+        Task<T> CreateAsync(T entity, bool isUnique = true);
         Task<T> UpdateAsync(T entity);
         Task DeleteAsync(TKey id);
         /// <summary>
