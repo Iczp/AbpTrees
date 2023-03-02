@@ -68,6 +68,14 @@ namespace IczpNet.AbpTrees
             SetFullPathName(null);
         }
 
+        protected TreeEntity( string name, TKey? parentId) 
+        {
+            SetParentId(parentId);
+            SetName(name);
+            SetFullPath(null);
+            SetFullPathName(null);
+        }
+
         public virtual void SetParentId(TKey? parentId)
         {
             ParentId = parentId;

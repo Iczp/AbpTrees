@@ -228,7 +228,7 @@ namespace IczpNet.AbpTrees
 
         public virtual async Task<T> CreateAsync(T inputEntity, bool isUnique = true)
         {
-            Assert.If(isUnique && await Repository.CountAsync(x => x.Name == inputEntity.Name) > 0, $"Already exists:{inputEntity.Name}");
+            Assert.If(isUnique && await Repository.CountAsync(x => x.Name == inputEntity.Name) > 0, $"Already exists name:{inputEntity.Name}");
 
             if (inputEntity.ParentId.HasValue)
             {
