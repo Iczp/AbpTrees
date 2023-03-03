@@ -8,6 +8,7 @@ using Volo.Abp.Caching;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Uow;
 
 namespace IczpNet.AbpTrees
 {
@@ -83,6 +84,8 @@ namespace IczpNet.AbpTrees
         protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetRequiredService<IObjectMapper>();
         protected IDistributedCache<List<TOutput>> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<List<TOutput>>>();
         protected IDistributedCache<TOutput> ItemCache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<TOutput>>();
+        protected IUnitOfWorkManager UnitOfWorkManager => LazyServiceProvider.LazyGetRequiredService<IUnitOfWorkManager>();
+        protected IUnitOfWork CurrentUnitOfWork => UnitOfWorkManager?.Current;
         public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
         public override Task RemoveCacheAsync()
