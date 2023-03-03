@@ -12,6 +12,8 @@ namespace IczpNet.AbpTrees
         where T : ITreeEntity<TKey>
         where TKey : struct
     {
+        public virtual string GetSplitString() => AbpTreesConsts.SplitPath;
+
         [MaxLength(64)]
         [Required(ErrorMessage = "Name Required.")]
         public virtual string Name { get; protected set; }
@@ -68,7 +70,7 @@ namespace IczpNet.AbpTrees
             SetFullPathName(null);
         }
 
-        protected TreeEntity( string name, TKey? parentId) 
+        protected TreeEntity(string name, TKey? parentId)
         {
             SetParentId(parentId);
             SetName(name);
@@ -93,12 +95,12 @@ namespace IczpNet.AbpTrees
 
         protected virtual void SetFullPath(string parentPath)
         {
-            FullPath = parentPath.IsNullOrEmpty() ? $"{Id}" : $"{parentPath}{AbpTreesConsts.SplitPath}{Id}";
+            FullPath = parentPath.IsNullOrEmpty() ? $"{Id}" : $"{parentPath}{GetSplitString()}{Id}";
         }
 
         protected virtual void SetFullPathName(string parentPathName)
         {
-            FullPathName = parentPathName.IsNullOrEmpty() ? $"{Name}" : $"{parentPathName}{AbpTreesConsts.SplitPath}{Name}";
+            FullPathName = parentPathName.IsNullOrEmpty() ? $"{Name}" : $"{parentPathName}{GetSplitString()}{Name}";
         }
 
         protected virtual void SetDepth(int depth)
@@ -123,5 +125,7 @@ namespace IczpNet.AbpTrees
                 SetFullPathName(parent.FullPathName);
             }
         }
+
+        
     }
 }

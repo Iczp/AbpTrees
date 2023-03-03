@@ -261,7 +261,7 @@ namespace IczpNet.AbpTrees
 
             Assert.NotNull(entity.Name, $"[Name] cannot be null.");
 
-            Assert.If(entity.Name.Contains(AbpTreesConsts.SplitPath), $"[Name] cannot contains char:\"{AbpTreesConsts.SplitPath}\"");
+            Assert.If(entity.Name.Contains(entity.GetSplitString()), $"[Name] cannot contains char:\"{entity.GetSplitString()}\"");
 
             Assert.NotNull(entity.ParentId.Equals(entity.Id), $"ParentId[{entity.ParentId}] may cause infinite loop.");
 

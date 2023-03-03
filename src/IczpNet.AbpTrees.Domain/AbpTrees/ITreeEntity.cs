@@ -12,6 +12,7 @@ namespace IczpNet.AbpTrees
         void SetName(string name);
         void SetParent(T parent);
         void SetParentId(TKey? parentId);
+        
     }
 
 
@@ -24,5 +25,6 @@ namespace IczpNet.AbpTrees
         int Depth { get; }
         double Sorting { get; set; }
         string Description { get; set; }
+        string GetSplitString();
     }
 }
