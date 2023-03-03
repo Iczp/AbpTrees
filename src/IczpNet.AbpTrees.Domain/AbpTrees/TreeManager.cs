@@ -112,8 +112,13 @@ namespace IczpNet.AbpTrees
             {
                 var entity = await GetAsync(id);
 
-                return ObjectMapper.Map<T, TOutput>(entity);
+                return await MapToOuputAsync(entity);
             });
+        }
+
+        protected virtual Task<TOutput> MapToOuputAsync(T entity)
+        {
+            return Task.FromResult(ObjectMapper.Map<T, TOutput>(entity));
         }
 
         public virtual async Task<List<TOutput>> GetManyByCacheAsync(List<TKey> idList)
