@@ -10,7 +10,7 @@
 		<Authors>IczpNet</Authors>
 		<RepositoryUrl>https://github.com/Iczp/AbpTrees.git</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/Iczp/AbpTrees.git</PackageProjectUrl>
-		<Version>0.1.7</Version>
+		<Version>0.1.8</Version>
   </PropertyGroup>
 
   <ItemGroup>
