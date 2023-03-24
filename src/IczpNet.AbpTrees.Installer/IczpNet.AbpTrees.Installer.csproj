@@ -3,7 +3,7 @@
     <Import Project="..\..\common.props" />
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
         <RootNamespace>IczpNet.AbpTrees</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -14,7 +14,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Volo.Abp.VirtualFileSystem" Version="7.0.2" />
+        <PackageReference Include="Volo.Abp.VirtualFileSystem" Version="7.1.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,6 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Update="ConfigureAwait.Fody" Version="3.3.2" />
       <PackageReference Update="Fody" Version="6.6.4">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

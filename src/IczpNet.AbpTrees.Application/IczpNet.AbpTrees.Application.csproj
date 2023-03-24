@@ -21,8 +21,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Volo.Abp.AutoMapper" Version="7.0.2" />
-    <PackageReference Include="Volo.Abp.Ddd.Application" Version="7.0.2" />
+    <PackageReference Include="Volo.Abp.AutoMapper" Version="7.1.0" />
+    <PackageReference Include="Volo.Abp.Ddd.Application" Version="7.1.0" />
     <ProjectReference Include="..\IczpNet.AbpTrees.Application.Contracts\IczpNet.AbpTrees.Application.Contracts.csproj" />
     <ProjectReference Include="..\IczpNet.AbpTrees.Domain\IczpNet.AbpTrees.Domain.csproj" />
   </ItemGroup>

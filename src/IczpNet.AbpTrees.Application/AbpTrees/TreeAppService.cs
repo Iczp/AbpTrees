@@ -12,26 +12,9 @@ using Volo.Abp.Domain.Repositories;
 namespace IczpNet.AbpTrees
 {
 
-    public abstract class TreeAppService<
-        TEntity,
-        TKey,
-        TGetOutputDto,
-        TGetListOutputDto,
-        TGetListInput,
-        TCreateInput,
-        TUpdateInput,
-        TTreeInfo>
-        :
-        TreeAppService<
-            TEntity,
-            TKey,
-            TGetOutputDto,
-            TGetListOutputDto,
-            TGetListInput,
-            TCreateInput,
-            TUpdateInput>
-        ,
-        ITreeAppService<TKey, TTreeInfo>
+    public abstract class TreeAppService<TEntity, TKey, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo> :
+        TreeAppService<TEntity, TKey, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput>,
+        ITreeAppService<TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo>
         where TEntity : class, ITreeEntity<TEntity, TKey>
         where TKey : struct
         where TGetOutputDto : IEntityDto<TKey>
@@ -45,6 +28,17 @@ namespace IczpNet.AbpTrees
         protected ITreeManager<TEntity, TKey, TTreeInfo> TreeCacheManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TKey, TTreeInfo>>();
         protected TreeAppService(IRepository<TEntity, TKey> repository) : base(repository) { }
 
+        [HttpGet]
+        public virtual Task<TTreeInfo> GetItemByCacheAsync(TKey id)
+        {
+            return TreeCacheManager.GetItemByCacheAsync(id);
+        }
+
+        [HttpGet]
+        public virtual Task<List<TTreeInfo>> GetManayByCacheAsync(List<TKey> idList)
+        {
+            return TreeCacheManager.GetManyByCacheAsync(idList);
+        }
 
         [HttpGet]
         public virtual async Task<List<TTreeInfo>> GetAllByCacheAsync()
@@ -56,24 +50,9 @@ namespace IczpNet.AbpTrees
     }
 
 
-    public abstract class TreeAppService<
-        TEntity,
-        TKey,
-        TGetOutputDto,
-        TGetListOutputDto,
-        TGetListInput,
-        TCreateInput,
-        TUpdateInput>
-        :
-        CrudAppService<
-            TEntity,
-            TGetOutputDto,
-            TGetListOutputDto,
-            TKey,
-            TGetListInput,
-            TCreateInput,
-            TUpdateInput>,
-        ITreeAppService<TKey>
+    public abstract class TreeAppService<TEntity, TKey, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput> :
+        CrudAppService<TEntity, TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput>,
+        ITreeAppService<TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput>
         where TEntity : class, ITreeEntity<TEntity, TKey>
         where TKey : struct
         where TGetOutputDto : IEntityDto<TKey>
@@ -98,6 +77,19 @@ namespace IczpNet.AbpTrees
         public override Task<TGetOutputDto> GetAsync(TKey id)
         {
             return base.GetAsync(id);
+        }
+
+
+
+        [HttpGet]
+        public virtual async Task<List<TGetOutputDto>> GetManyAsync(List<TKey> idList)
+        {
+            var list = new List<TGetOutputDto>();
+            foreach (var id in idList)
+            {
+                list.Add(await GetAsync(id));
+            }
+            return list;
         }
 
         [HttpGet]
