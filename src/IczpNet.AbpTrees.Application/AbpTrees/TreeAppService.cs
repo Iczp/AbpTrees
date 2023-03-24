@@ -40,6 +40,7 @@ namespace IczpNet.AbpTrees
             return TreeCacheManager.GetManyByCacheAsync(idList);
         }
 
+
         [HttpGet]
         public virtual async Task<List<TTreeInfo>> GetAllByCacheAsync()
         {
@@ -47,6 +48,8 @@ namespace IczpNet.AbpTrees
 
             return await TreeCacheManager.GetAllByCacheAsync();
         }
+
+
     }
 
 
@@ -150,6 +153,15 @@ namespace IczpNet.AbpTrees
             await CheckDeletePolicyAsync();
 
             await TreeManager.DeleteAsync(id);
+        }
+
+        [HttpPost]
+        public async Task DeleteManayAsync(List<TKey> idList)
+        {
+            foreach (var id in idList)
+            {
+                await DeleteAsync(id);
+            }
         }
 
         [HttpPost]
