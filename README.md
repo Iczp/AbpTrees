@@ -612,21 +612,35 @@ namespace IczpNet.AbpTrees
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Services;
 
 namespace IczpNet.AbpTrees
 {
-    public interface ITreeAppService<TKey, TTreeInfo> : ITreeAppService<TKey>
+    public interface ITreeAppService<TGetOutputDto, TGetListOutputDto, TKey, in TGetListInput, in TCreateInput, in TUpdateInput, TTreeInfo>
+        : ITreeAppService<TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput>
         where TKey : struct
         where TTreeInfo : ITreeInfo<TKey>
     {
+        Task<TTreeInfo> GetItemByCacheAsync(TKey id);
+
+        Task<List<TTreeInfo>> GetManayByCacheAsync(List<TKey> idList);
+
         Task<List<TTreeInfo>> GetAllByCacheAsync();
     }
 
-    public interface ITreeAppService<TKey> where TKey : struct
+    public interface ITreeAppService<TGetOutputDto, TGetListOutputDto, TKey, in TGetListInput, in TCreateInput, in TUpdateInput>
+        : ICrudAppService<TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput>
+        where TKey : struct
     {
+
+        Task<List<TGetOutputDto>> GetManyAsync(List<TKey> idList);
+
         Task<DateTime> RepairDataAsync();
+
+
     }
 }
+
 
 ```
 
@@ -711,26 +725,9 @@ using Volo.Abp.Domain.Repositories;
 namespace IczpNet.AbpTrees
 {
 
-    public abstract class TreeAppService<
-        TEntity,
-        TKey,
-        TGetOutputDto,
-        TGetListOutputDto,
-        TGetListInput,
-        TCreateInput,
-        TUpdateInput,
-        TTreeInfo>
-        :
-        TreeAppService<
-            TEntity,
-            TKey,
-            TGetOutputDto,
-            TGetListOutputDto,
-            TGetListInput,
-            TCreateInput,
-            TUpdateInput>
-        ,
-        ITreeAppService<TKey, TTreeInfo>
+    public abstract class TreeAppService<TEntity, TKey, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo> :
+        TreeAppService<TEntity, TKey, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput>,
+        ITreeAppService<TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo>
         where TEntity : class, ITreeEntity<TEntity, TKey>
         where TKey : struct
         where TGetOutputDto : IEntityDto<TKey>
@@ -744,6 +741,17 @@ namespace IczpNet.AbpTrees
         protected ITreeManager<TEntity, TKey, TTreeInfo> TreeCacheManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TKey, TTreeInfo>>();
         protected TreeAppService(IRepository<TEntity, TKey> repository) : base(repository) { }
 
+        [HttpGet]
+        public virtual Task<TTreeInfo> GetItemByCacheAsync(TKey id)
+        {
+            return TreeCacheManager.GetItemByCacheAsync(id);
+        }
+
+        [HttpGet]
+        public virtual Task<List<TTreeInfo>> GetManayByCacheAsync(List<TKey> idList)
+        {
+            return TreeCacheManager.GetManyByCacheAsync(idList);
+        }
 
         [HttpGet]
         public virtual async Task<List<TTreeInfo>> GetAllByCacheAsync()
@@ -755,24 +763,9 @@ namespace IczpNet.AbpTrees
     }
 
 
-    public abstract class TreeAppService<
-        TEntity,
-        TKey,
-        TGetOutputDto,
-        TGetListOutputDto,
-        TGetListInput,
-        TCreateInput,
-        TUpdateInput>
-        :
-        CrudAppService<
-            TEntity,
-            TGetOutputDto,
-            TGetListOutputDto,
-            TKey,
-            TGetListInput,
-            TCreateInput,
-            TUpdateInput>,
-        ITreeAppService<TKey>
+    public abstract class TreeAppService<TEntity, TKey, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput> :
+        CrudAppService<TEntity, TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput>,
+        ITreeAppService<TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput>
         where TEntity : class, ITreeEntity<TEntity, TKey>
         where TKey : struct
         where TGetOutputDto : IEntityDto<TKey>
@@ -799,6 +792,19 @@ namespace IczpNet.AbpTrees
             return base.GetAsync(id);
         }
 
+
+
+        [HttpGet]
+        public virtual async Task<List<TGetOutputDto>> GetManyAsync(List<TKey> idList)
+        {
+            var list = new List<TGetOutputDto>();
+            foreach (var id in idList)
+            {
+                list.Add(await GetAsync(id));
+            }
+            return list;
+        }
+
         [HttpGet]
         public override Task<PagedResultDto<TGetListOutputDto>> GetListAsync(TGetListInput input)
         {
@@ -810,7 +816,7 @@ namespace IczpNet.AbpTrees
             Assert.If(!input.IsEnabledParentId && input.ParentId != null, "When [IsEnabledParentId]=false,then [ParentId] != null");
 
             return (await base.CreateFilteredQueryAsync(input))
-                .WhereIf(input.Depth.HasValue, x => x.Depth == input.Depth)
+                .WhereIf(input.DepthList != null && input.DepthList.Any(), x => input.DepthList.Contains(x.Depth))
                 .WhereIf(input.IsEnabledParentId, x => x.ParentId.Equals(input.ParentId))
                //.WhereIf(!string.IsNullOrWhiteSpace(input.Keyword), x => x.Name.Contains(input.Keyword))
                ;
@@ -881,6 +887,8 @@ namespace IczpNet.AbpTrees
 
 
 ## Usage
+
+https://github.com/Iczp/AbpTrees/tree/master/Example
 
 ### Create a entity
 
@@ -1127,22 +1135,20 @@ IDepartmentAppSevice and implement  `ICrudAppService`,  `ITreeAppService`
 using IczpNet.AbpTrees;
 using IczpNet.AbpTreesDemo.Departments.Dtos;
 using System;
-using Volo.Abp.Application.Services;
 
 namespace IczpNet.AbpTreesDemo.Departments
 {
     public interface IDepartmentAppSevice :
-        ICrudAppService<
-            DepartmentDto,
+        ITreeAppService<DepartmentDto,
             DepartmentDto,
             Guid,
             DepartmentGetListInput,
             DepartmentCreateInput,
-            DepartmentUpdateInput>
-        , ITreeAppService<Guid, DepartmentInfo>
+            DepartmentUpdateInput, DepartmentInfo>
     {
     }
 }
+
 
 ```
 
@@ -1153,22 +1159,24 @@ namespace IczpNet.AbpTreesDemo.Departments
 ```C#
 using IczpNet.AbpTrees;
 using IczpNet.AbpTreesDemo.Departments.Dtos;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using Volo.Abp.Domain.Repositories;
 
 namespace IczpNet.AbpTreesDemo.Departments
 {
-    public class DepartmentAppService 
+
+    [Route($"Api/App/{AbpTreesDemoRemoteServiceConsts.ModuleName}/[Controller]/[Action]")]
+    public class DepartmentAppService
         : TreeAppService<
-            Department, 
-            DepartmentDto, 
-            DepartmentDto, 
-            DepartmentGetListInput, 
-            DepartmentCreateInput, 
-            DepartmentUpdateInput, 
-            DepartmentInfo, 
-            DepartmentWithChildsDto, 
-            DepartmentWithParentDto>, 
+            Department,
+            Guid,
+            DepartmentDto,
+            DepartmentDto,
+            DepartmentGetListInput,
+            DepartmentCreateInput,
+            DepartmentUpdateInput,
+            DepartmentInfo>,
         IDepartmentAppSevice
     {
         public DepartmentAppService(IRepository<Department, Guid> repository) : base(repository)
@@ -1268,8 +1276,8 @@ public class AbpTreesDemoApplicationAutoMapperProfile : Profile
           "CorsOrigins": "https://*.AbpTreesDemo.com,http://localhost:4200,http://localhost:44307,https://localhost:44307"
         },
         "ConnectionStrings": {
-          "Default": "Server=localhost;Initial Catalog=AbpTreesDemo_Main;User ID=sa;Password=123",
-          "AbpTreesDemo": "Server=localhost;Initial Catalog=AbpTreesDemo_Module;User ID=sa;Password=123"
+          "Default": "Server=localhost;Initial Catalog=AbpTreesDemo_Main;User ID=sa;Password=123;TrustServerCertificate=True",
+          "AbpTreesDemo": "Server=localhost;Initial Catalog=AbpTreesDemo_Module;User ID=sa;Password=123;TrustServerCertificate=True"
         },
         "Redis": {
           "Configuration": "127.0.0.1"
@@ -1281,6 +1289,7 @@ public class AbpTreesDemoApplicationAutoMapperProfile : Profile
           "SwaggerClientSecret": "1q2w3e*"
         }
       }
+      
       
       ```
 
