@@ -84,7 +84,7 @@ namespace IczpNet.AbpTrees
         protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetRequiredService<IObjectMapper>();
         protected IDistributedCache<List<TOutput>> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<List<TOutput>>>();
         protected IDistributedCache<TOutput> ItemCache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<TOutput>>();
-        protected IUnitOfWorkManager UnitOfWorkManager => LazyServiceProvider.LazyGetRequiredService<IUnitOfWorkManager>();
+        
         protected IUnitOfWork CurrentUnitOfWork => UnitOfWorkManager?.Current;
         public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
@@ -151,7 +151,8 @@ namespace IczpNet.AbpTrees
         where TKey : struct
     {
         public virtual string CacheKey => typeof(T).FullName;
-        public IRepository<T, TKey> Repository { get; }
+        protected IRepository<T, TKey> Repository { get; }
+        protected IUnitOfWorkManager UnitOfWorkManager => LazyServiceProvider.LazyGetRequiredService<IUnitOfWorkManager>();
         public TreeManager(IRepository<T, TKey> repository)
         {
             Repository = repository;
@@ -238,6 +239,8 @@ namespace IczpNet.AbpTrees
         {
             Assert.If(isUnique && await Repository.CountAsync(x => x.Name == inputEntity.Name) > 0, $"Already exists name:{inputEntity.Name}");
 
+            var entity = await Repository.InsertAsync(inputEntity, true);
+
             if (inputEntity.ParentId.HasValue)
             {
                 var parent = await Repository.GetAsync(inputEntity.ParentId.Value);
@@ -251,7 +254,8 @@ namespace IczpNet.AbpTrees
                 inputEntity.SetParent(null);
             }
 
-            var entity = await Repository.InsertAsync(inputEntity, autoSave: true);
+            //自增
+            await UnitOfWorkManager.Current.SaveChangesAsync();
 
             await RemoveCacheAsync();
 

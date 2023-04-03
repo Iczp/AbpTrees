@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -40,16 +41,14 @@ namespace IczpNet.AbpTrees
             return TreeCacheManager.GetManyByCacheAsync(idList);
         }
 
-
         [HttpGet]
+        [RemoteService]
         public virtual async Task<List<TTreeInfo>> GetAllByCacheAsync()
         {
             await CheckGetListPolicyAsync();
 
             return await TreeCacheManager.GetAllByCacheAsync();
         }
-
-
     }
 
 

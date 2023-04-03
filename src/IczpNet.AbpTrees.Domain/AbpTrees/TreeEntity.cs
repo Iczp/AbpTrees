@@ -21,11 +21,11 @@ namespace IczpNet.AbpTrees
         public virtual TKey? ParentId { get; set; }
 
         [MaxLength(1000)]
-        [Required]
+        //[Required]
         public virtual string FullPath { get; protected set; }
 
         [MaxLength(1000)]
-        [Required]
+        //[Required]
         public virtual string FullPathName { get; protected set; }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace IczpNet.AbpTrees
             Name = name;
         }
 
-        protected virtual void SetFullPath(string parentPath)
+        internal virtual void SetFullPath(string parentPath)
         {
             FullPath = parentPath.IsNullOrEmpty() ? $"{Id}" : $"{parentPath}{GetSplitString()}{Id}";
         }
