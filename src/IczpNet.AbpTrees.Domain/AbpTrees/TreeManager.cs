@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Caching;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
@@ -84,7 +85,7 @@ namespace IczpNet.AbpTrees
         protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetRequiredService<IObjectMapper>();
         protected IDistributedCache<List<TOutput>> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<List<TOutput>>>();
         protected IDistributedCache<TOutput> ItemCache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<TOutput>>();
-        
+
         protected IUnitOfWork CurrentUnitOfWork => UnitOfWorkManager?.Current;
         public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
@@ -175,7 +176,7 @@ namespace IczpNet.AbpTrees
 
             foreach (var fullPath in fullPaths)
             {
-                entityPredicate = entityPredicate.Or(x => x.FullPath.StartsWith(fullPath));
+                entityPredicate = entityPredicate.Or(x => x.FullPath.Concat("/").ToString().StartsWith(fullPath.Concat("/").ToString()));
             }
 
             var entityIdQuery = (await Repository.GetQueryableAsync())
@@ -235,9 +236,15 @@ namespace IczpNet.AbpTrees
             return list;
         }
 
+
+
         public virtual async Task<T> CreateAsync(T inputEntity, bool isUnique = true)
         {
-            Assert.If(isUnique && await Repository.CountAsync(x => x.Name == inputEntity.Name) > 0, $"Already exists name:{inputEntity.Name}");
+
+            if (isUnique)
+            {
+                await CheckExistsByCreateAsync(inputEntity);
+            }
 
             var entity = await Repository.InsertAsync(inputEntity, true);
 
@@ -262,7 +269,17 @@ namespace IczpNet.AbpTrees
             return entity;
         }
 
-        public virtual async Task<T> UpdateAsync(T entity)
+        protected virtual async Task CheckExistsByCreateAsync(T inputEntity)
+        {
+            Assert.If(await Repository.CountAsync(x => x.Name == inputEntity.Name) > 0, $"Already exists name:{inputEntity.Name}");
+        }
+
+        protected virtual async Task CheckExistsByUpdateAsync(T entity)
+        {
+            Assert.If(await Repository.CountAsync(x => x.Name == entity.Name && !x.Id.Equals(entity.Id)) > 0, $" Name[{entity.Name}] already such.");
+        }
+
+        public virtual async Task<T> UpdateAsync(T entity, bool isUnique = true)
         {
             Assert.NotNull(entity, $"an entity is no such.");
 
@@ -275,8 +292,10 @@ namespace IczpNet.AbpTrees
             //var arr = entity.FullPath.Split(AbpTreesConsts.SplitPath);
 
             //Array.IndexOf(arr, entity.ParentId);
-
-            Assert.If(await Repository.CountAsync(x => x.Name == entity.Name && !x.Id.Equals(entity.Id)) > 0, $" Name[{entity.Name}] already such.");
+            if (isUnique)
+            {
+                await CheckExistsByUpdateAsync(entity);
+            }
 
             //entity.SetName(entity.Name);
 

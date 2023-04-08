@@ -123,7 +123,7 @@ namespace IczpNet.AbpTrees
 
             inputEntity.SetParentId(input.ParentId);
 
-            var entity = await TreeManager.CreateAsync(inputEntity);
+            var entity = await TreeManager.CreateAsync(inputEntity, true);
 
             return ObjectMapper.Map<TEntity, TGetOutputDto>(entity);
         }
