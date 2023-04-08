@@ -274,51 +274,51 @@ namespace IczpNet.AbpTrees
             Assert.If(await Repository.CountAsync(x => x.Name == inputEntity.Name) > 0, $"Already exists name:{inputEntity.Name}");
         }
 
-        protected virtual async Task CheckExistsByUpdateAsync(T entity)
+        protected virtual async Task CheckExistsByUpdateAsync(T inputEntity)
         {
-            Assert.If(await Repository.CountAsync(x => x.Name == entity.Name && !x.Id.Equals(entity.Id)) > 0, $" Name[{entity.Name}] already such.");
+            Assert.If(await Repository.CountAsync(x => x.Name == inputEntity.Name && !x.Id.Equals(inputEntity.Id)) > 0, $" Name[{inputEntity.Name}] already such.");
         }
 
-        public virtual async Task<T> UpdateAsync(T entity, bool isUnique = true)
+        public virtual async Task<T> UpdateAsync(T inputEntity, bool isUnique = true)
         {
-            Assert.NotNull(entity, $"an entity is no such.");
+            Assert.NotNull(inputEntity, $"an entity is no such.");
 
-            Assert.NotNull(entity.Name, $"[Name] cannot be null.");
+            Assert.NotNull(inputEntity.Name, $"[Name] cannot be null.");
 
-            Assert.If(entity.Name.Contains(entity.GetSplitString()), $"[Name] cannot contains char:\"{entity.GetSplitString()}\"");
+            Assert.If(inputEntity.Name.Contains(inputEntity.GetSplitString()), $"[Name] cannot contains char:\"{inputEntity.GetSplitString()}\"");
 
-            Assert.NotNull(entity.ParentId.Equals(entity.Id), $"ParentId[{entity.ParentId}] may cause infinite loop.");
+            Assert.NotNull(inputEntity.ParentId.Equals(inputEntity.Id), $"ParentId[{inputEntity.ParentId}] may cause infinite loop.");
 
             //var arr = entity.FullPath.Split(AbpTreesConsts.SplitPath);
 
             //Array.IndexOf(arr, entity.ParentId);
             if (isUnique)
             {
-                await CheckExistsByUpdateAsync(entity);
+                await CheckExistsByUpdateAsync(inputEntity);
             }
 
             //entity.SetName(entity.Name);
 
-            if (entity.ParentId.HasValue)
+            if (inputEntity.ParentId.HasValue)
             {
                 //变更上级
-                var parent = await Repository.GetAsync(entity.ParentId.Value);
+                var parent = await Repository.GetAsync(inputEntity.ParentId.Value);
 
                 Assert.NotNull(parent, $"[Parent] is no such.");
 
-                entity.SetParent(parent);
+                inputEntity.SetParent(parent);
             }
             else
             {
-                entity.SetParent(null);
+                inputEntity.SetParent(null);
             }
 
             //update childs
-            await ChangeChildsAsync(entity);
+            await ChangeChildsAsync(inputEntity);
 
             await RemoveCacheAsync();
 
-            return entity;
+            return inputEntity;
         }
 
         protected virtual async Task ChangeChildsAsync(T entiy)
