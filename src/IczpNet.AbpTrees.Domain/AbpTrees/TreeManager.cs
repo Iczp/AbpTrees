@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Caching;
-using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
@@ -159,10 +158,10 @@ namespace IczpNet.AbpTrees
             Repository = repository;
         }
 
-        public virtual async Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<TKey> departmentIdList)
+        public virtual async Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(IEnumerable<TKey> treeEntityIdList)
         {
             var fullPathsQueryable = (await Repository.GetQueryableAsync())
-                .Where(x => departmentIdList.Contains(x.Id))
+                .Where(x => treeEntityIdList.Contains(x.Id))
                 .Select(x => x.FullPath)
             ;
 
@@ -176,12 +175,10 @@ namespace IczpNet.AbpTrees
 
             foreach (var fullPath in fullPaths)
             {
-                entityPredicate = entityPredicate.Or(x => x.FullPath.Concat("/").ToString().StartsWith(fullPath.Concat("/").ToString()));
+                entityPredicate = entityPredicate.Or(x => (x.FullPath + "/").StartsWith(fullPath + "/"));
             }
 
-            var entityIdQuery = (await Repository.GetQueryableAsync())
-                .Where(entityPredicate)
-            ;
+            var entityIdQuery = (await Repository.GetQueryableAsync()).Where(entityPredicate);
 
             //Logger.LogDebug("entityIdQuery:\r\n" + entityIdQuery.ToQueryString());
             //Logger.LogDebug("entityIdQuery:\r\n" + string.Join(",", entityIdQuery.ToList()));
@@ -235,8 +232,6 @@ namespace IczpNet.AbpTrees
             }
             return list;
         }
-
-
 
         public virtual async Task<T> CreateAsync(T inputEntity, bool isUnique = true)
         {
@@ -353,7 +348,7 @@ namespace IczpNet.AbpTrees
             await RemoveCacheAsync();
         }
 
-        public async Task<List<T>> GetChildsAsync(TKey? entityId)
+        public virtual async Task<List<T>> GetChildsAsync(TKey? entityId)
         {
             //return await Repository.GetListAsync(x => x.ParentId == departmentId);
             return (await Repository.GetQueryableAsync())
