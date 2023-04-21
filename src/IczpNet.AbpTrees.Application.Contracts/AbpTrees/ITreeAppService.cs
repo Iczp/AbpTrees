@@ -24,7 +24,7 @@ namespace IczpNet.AbpTrees
 
         Task<List<TGetOutputDto>> GetManyAsync(List<TKey> idList);
 
-        Task DeleteManayAsync(List<TKey> idList);
+        Task DeleteManyAsync(List<TKey> idList);
 
         Task<DateTime> RepairDataAsync();
 

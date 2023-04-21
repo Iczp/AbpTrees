@@ -333,13 +333,20 @@ namespace IczpNet.AbpTrees
             }
         }
 
+        protected virtual Task CheckChildCountAsync(T entity)
+        {
+            var childCount = entity.Childs.Count();
+
+            Assert.If(childCount > 0, $"Has ({childCount}) childs, cannot delete.");
+
+            return Task.CompletedTask;
+        }
+
         public virtual async Task DeleteAsync(TKey id)
         {
             var entity = await Repository.GetAsync(id);
 
-            var childCount = entity.Childs.Count();
-
-            Assert.If(childCount > 0, $"Has ({childCount}) childs, cannot delete.");
+            await CheckChildCountAsync(entity);
 
             await Repository.DeleteAsync(entity);
 

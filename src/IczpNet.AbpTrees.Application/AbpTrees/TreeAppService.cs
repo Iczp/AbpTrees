@@ -12,7 +12,6 @@ using Volo.Abp.Domain.Repositories;
 
 namespace IczpNet.AbpTrees
 {
-
     public abstract class TreeAppService<TEntity, TKey, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo> :
         TreeAppService<TEntity, TKey, TGetOutputDto, TGetListOutputDto, TGetListInput, TCreateInput, TUpdateInput>,
         ITreeAppService<TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput, TTreeInfo>
@@ -155,7 +154,7 @@ namespace IczpNet.AbpTrees
         }
 
         [HttpPost]
-        public async Task DeleteManayAsync(List<TKey> idList)
+        public virtual async Task DeleteManyAsync(List<TKey> idList)
         {
             foreach (var id in idList)
             {
