@@ -22,6 +22,10 @@
         /// </summary>
         public virtual int Depth { get; set; }
         /// <summary>
+        /// 子级数量
+        /// </summary>
+        public virtual int ChildrenCount { get; set; }
+        /// <summary>
         /// 路径
         /// </summary>
         public virtual string FullPath { get; set; }

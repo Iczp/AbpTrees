@@ -120,7 +120,7 @@ namespace IczpNet.AbpTrees
 
             inputEntity.SetName(input.Name);
 
-            inputEntity.SetParentId(input.ParentId);
+            //inputEntity.SetParentId(input.ParentId);
 
             var entity = await TreeManager.CreateAsync(inputEntity, true);
 
@@ -138,9 +138,9 @@ namespace IczpNet.AbpTrees
 
             entity.SetName(input.Name);
 
-            entity.SetParentId(input.ParentId);
+            //entity.SetParentId(input.ParentId);
 
-            await TreeManager.UpdateAsync(entity);
+            await TreeManager.UpdateAsync(entity, input.ParentId);
 
             return await MapToGetOutputDtoAsync(entity);
         }

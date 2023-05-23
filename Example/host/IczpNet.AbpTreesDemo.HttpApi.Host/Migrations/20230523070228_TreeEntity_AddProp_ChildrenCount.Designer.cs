@@ -4,6 +4,7 @@ using IczpNet.AbpTreesDemo.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace IczpNet.AbpTreesDemo.Migrations
 {
     [DbContext(typeof(AbpTreesDemoHttpApiHostMigrationsDbContext))]
-    partial class AbpTreesDemoHttpApiHostMigrationsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230523070228_TreeEntity_AddProp_ChildrenCount")]
+    partial class TreeEntity_AddProp_ChildrenCount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

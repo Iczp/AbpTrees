@@ -274,7 +274,7 @@ namespace IczpNet.AbpTrees
             Assert.If(await Repository.CountAsync(x => x.Name == inputEntity.Name && !x.Id.Equals(inputEntity.Id)) > 0, $" Name[{inputEntity.Name}] already such.");
         }
 
-        public virtual async Task<T> UpdateAsync(T inputEntity, bool isUnique = true)
+        public virtual async Task<T> UpdateAsync(T inputEntity, TKey? newParentId, bool isUnique = true)
         {
             Assert.NotNull(inputEntity, $"an entity is no such.");
 
@@ -294,7 +294,7 @@ namespace IczpNet.AbpTrees
 
             //entity.SetName(entity.Name);
 
-            if (inputEntity.ParentId.HasValue)
+            if (newParentId.HasValue)
             {
                 //变更上级
                 var parent = await Repository.GetAsync(inputEntity.ParentId.Value);
@@ -311,9 +311,33 @@ namespace IczpNet.AbpTrees
             //update childs
             await ChangeChildsAsync(inputEntity);
 
+            await UnitOfWorkManager.Current.SaveChangesAsync();
+
+            //update childrenCount
+            var idList = new List<TKey?>() { newParentId, inputEntity.ParentId, inputEntity.Id }
+                .Where(x => x.HasValue)
+                .Select(x => x.Value)
+                .Distinct()
+                .ToList();
+            await UpdateParentChildrenCountAsync(idList);
+
             await RemoveCacheAsync();
 
             return inputEntity;
+        }
+
+        public virtual async Task UpdateParentChildrenCountAsync(List<TKey> parentIdList)
+        {
+            foreach (var parentId in parentIdList)
+            {
+                var parent = await Repository.GetAsync(parentId);
+
+                var childrenCount = await Repository.CountAsync(x => x.ParentId.Equals(parentId));
+
+                parent.SetChildrenCount(childrenCount);
+
+                await Repository.UpdateAsync(parent, autoSave: true);
+            }
         }
 
         protected virtual async Task ChangeChildsAsync(T entiy)
@@ -365,7 +389,7 @@ namespace IczpNet.AbpTrees
             {
                 await SetEntityAsync(entity);
 
-                await UpdateAsync(entity);
+                await UpdateAsync(entity, entity.ParentId);
             }
         }
 

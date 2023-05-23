@@ -34,10 +34,14 @@ namespace IczpNet.AbpTrees
         [Range(0, 1024)]
         public virtual int Depth { get; protected set; }
 
+        public virtual int ChildrenCount { get; set; }
+
         public virtual double Sorting { get; set; }
 
         [MaxLength(500)]
         public virtual string Description { get; set; }
+
+
 
         public virtual int GetChildsCount()
         {
@@ -78,7 +82,7 @@ namespace IczpNet.AbpTrees
             SetFullPathName(null);
         }
 
-        public virtual void SetParentId(TKey? parentId)
+        protected virtual void SetParentId(TKey? parentId)
         {
             ParentId = parentId;
         }
@@ -126,6 +130,9 @@ namespace IczpNet.AbpTrees
             }
         }
 
-        
+        public void SetChildrenCount(int childrenCount)
+        {
+            ChildrenCount = childrenCount;
+        }
     }
 }

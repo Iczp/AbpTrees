@@ -9,10 +9,12 @@ namespace IczpNet.AbpTrees
     {
         T Parent { get; }
         IEnumerable<T> Childs { get; }
+        int ChildrenCount { get; }
+        void SetChildrenCount(int childrenCount);
         void SetName(string name);
         void SetParent(T parent);
-        void SetParentId(TKey? parentId);
-        
+        //void SetParentId(TKey? parentId);
+
     }
 
 
