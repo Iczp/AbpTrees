@@ -1309,3 +1309,15 @@ public class AbpTreesDemoApplicationAutoMapperProfile : Profile
 
       
 
+### Upgrade v1.0.13(Add Property ChildrenCount)
+
+```sql
+  --update ChildrenCount
+  
+  UPDATE [dbo].[AbpTreesDemoDepartment] 
+  SET [dbo].[AbpTreesDemoDepartment].ChildrenCount = (
+  SELECT COUNT(1) FROM [dbo].[AbpTreesDemoDepartment] WHERE ParentId=x.Id
+  )
+  FROM [dbo].[AbpTreesDemoDepartment] x
+```
+
