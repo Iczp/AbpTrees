@@ -1,6 +1,7 @@
 ﻿using IczpNet.AbpTrees.Statics;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -250,6 +251,8 @@ namespace IczpNet.AbpTrees
                 Assert.NotNull(parent, $"No such parent entity:{inputEntity.ParentId}");
 
                 inputEntity.SetParent(parent);
+
+                await UpdateParentChildrenCountAsync(new List<TKey> { parent.Id});
             }
             else
             {
