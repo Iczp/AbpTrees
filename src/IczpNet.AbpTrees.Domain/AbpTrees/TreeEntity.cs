@@ -8,16 +8,31 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace IczpNet.AbpTrees
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <example>
+    /// [Index(nameof(Name))]
+    /// [Index(nameof(FullPath))]
+    /// </example>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
     public abstract class TreeEntity<T, TKey> : FullAuditedAggregateRoot<TKey>, ITreeEntity<T, TKey>
         where T : ITreeEntity<TKey>
         where TKey : struct
     {
         public virtual string GetSplitString() => AbpTreesConsts.SplitPath;
 
+        /// <summary>
+        /// 名称
+        /// </summary>
         [MaxLength(64)]
         [Required(ErrorMessage = "Name Required.")]
         public virtual string Name { get; protected set; }
 
+        /// <summary>
+        /// 父级
+        /// </summary>
         public virtual TKey? ParentId { get; set; }
 
         [MaxLength(1000)]
@@ -34,14 +49,21 @@ namespace IczpNet.AbpTrees
         [Range(0, 1024)]
         public virtual int Depth { get; protected set; }
 
+        /// <summary>
+        /// 子级数量
+        /// </summary>
         public virtual int ChildrenCount { get; set; }
 
+        /// <summary>
+        /// 排序
+        /// </summary>
         public virtual double Sorting { get; set; }
 
+        /// <summary>
+        /// 说明
+        /// </summary>
         [MaxLength(500)]
         public virtual string Description { get; set; }
-
-
 
         public virtual int GetChildsCount()
         {

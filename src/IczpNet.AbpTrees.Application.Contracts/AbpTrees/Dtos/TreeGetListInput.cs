@@ -17,5 +17,10 @@ namespace IczpNet.AbpTrees.Dtos
 
         [DefaultValue("")]
         public virtual string Keyword { get; set; }
+
+        public override string ToString()
+        {
+            return $"[TreeGetListInput: {GetType().Name}] ParentId = {ParentId}";
+        }
     }
 }
