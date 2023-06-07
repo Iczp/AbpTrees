@@ -10,6 +10,7 @@
 		<RepositoryUrl>https://github.com/Iczp/AbpTrees.git</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/Iczp/AbpTrees.git</PackageProjectUrl>
 		<Version>0.1.16</Version>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
