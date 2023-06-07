@@ -20,7 +20,12 @@ namespace IczpNet.AbpTreesDemo.Departments
             DepartmentInfo>,
         IDepartmentAppSevice
     {
-        public DepartmentAppService(IRepository<Department, Guid> repository) : base(repository)
+        //public DepartmentAppService(IRepository<Department, Guid> repository) : base(repository)
+        //{
+        //}
+        public DepartmentAppService(
+            IRepository<Department, Guid> repository, 
+            ITreeManager<Department, Guid, DepartmentInfo> treeManager) : base(repository, treeManager)
         {
         }
     }

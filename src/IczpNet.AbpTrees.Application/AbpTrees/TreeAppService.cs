@@ -25,19 +25,26 @@ namespace IczpNet.AbpTrees
         where TTreeInfo : ITreeInfo<TKey>
 
     {
-        protected ITreeManager<TEntity, TKey, TTreeInfo> TreeCacheManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TKey, TTreeInfo>>();
-        protected TreeAppService(IRepository<TEntity, TKey> repository) : base(repository) { }
+        protected new ITreeManager<TEntity, TKey, TTreeInfo> TreeManager { get; }
+        //protected TreeAppService(IRepository<TEntity, TKey> repository) : base(repository) { }
+
+        public TreeAppService(
+            IRepository<TEntity, TKey> repository,
+            ITreeManager<TEntity, TKey, TTreeInfo> treeManager) : base(repository, treeManager)
+        {
+            TreeManager = treeManager;
+        }
 
         [HttpGet]
         public virtual Task<TTreeInfo> GetItemByCacheAsync(TKey id)
         {
-            return TreeCacheManager.GetItemByCacheAsync(id);
+            return TreeManager.GetItemByCacheAsync(id);
         }
 
         [HttpGet]
         public virtual Task<List<TTreeInfo>> GetManayByCacheAsync(List<TKey> idList)
         {
-            return TreeCacheManager.GetManyByCacheAsync(idList);
+            return TreeManager.GetManyByCacheAsync(idList);
         }
 
         [HttpGet]
@@ -46,7 +53,7 @@ namespace IczpNet.AbpTrees
         {
             await CheckGetListPolicyAsync();
 
-            return await TreeCacheManager.GetAllByCacheAsync();
+            return await TreeManager.GetAllByCacheAsync();
         }
     }
 
@@ -65,9 +72,19 @@ namespace IczpNet.AbpTrees
     {
         protected virtual string RepairDataPolicyName { get; set; }
 
-        protected virtual ITreeManager<TEntity, TKey> TreeManager => LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TKey>>();
+        protected virtual ITreeManager<TEntity, TKey> TreeManager { get; }
 
-        public TreeAppService(IRepository<TEntity, TKey> repository) : base(repository) { }
+        //public TreeAppService(IRepository<TEntity, TKey> repository) : base(repository)
+        //{
+        //    //TreeManager = LazyServiceProvider.LazyGetRequiredService<ITreeManager<TEntity, TKey>>();
+        //}
+
+        public TreeAppService(
+            IRepository<TEntity, TKey> repository,
+            ITreeManager<TEntity, TKey> treeManager) : base(repository)
+        {
+            TreeManager = treeManager;
+        }
 
         protected override IQueryable<TEntity> ApplyDefaultSorting(IQueryable<TEntity> query)
         {
