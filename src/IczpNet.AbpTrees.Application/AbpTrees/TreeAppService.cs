@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -49,11 +50,40 @@ namespace IczpNet.AbpTrees
 
         [HttpGet]
         [RemoteService]
-        public virtual async Task<List<TTreeInfo>> GetAllByCacheAsync()
+        public virtual async Task<PagedResultDto<TTreeInfo>> GetAllByCacheAsync(TreeGetListInput<TKey> input)
         {
             await CheckGetListPolicyAsync();
 
-            return await TreeManager.GetAllByCacheAsync();
+            var query = await CreateFilteredQueryByCacheAsync(input);
+
+            query = ApplyDefaultSortingByCache(query);
+
+            var totalCount = await AsyncExecuter.CountAsync(query);
+
+            var items = query
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount)
+                .ToList();
+
+            return new PagedResultDto<TTreeInfo>(totalCount, items);
+        }
+
+        protected virtual async Task<IQueryable<TTreeInfo>> CreateFilteredQueryByCacheAsync(TreeGetListInput<TKey> input)
+        {
+            await Task.Yield();
+
+            var query = (await TreeManager.GetAllByCacheAsync())
+                .AsQueryable()
+                .WhereIf(input.DepthList != null && input.DepthList.Any(), x => input.DepthList.Contains(x.Depth))
+                .WhereIf(input.IsEnabledParentId, x => x.ParentId.Equals(input.ParentId))
+                .WhereIf(!string.IsNullOrWhiteSpace(input.Keyword), x => x.Name.Contains(input.Keyword))
+                ;
+            return query;
+        }
+
+        protected virtual IQueryable<TTreeInfo> ApplyDefaultSortingByCache(IQueryable<TTreeInfo> query)
+        {
+            return query;
         }
     }
 
@@ -123,7 +153,7 @@ namespace IczpNet.AbpTrees
             return (await base.CreateFilteredQueryAsync(input))
                 .WhereIf(input.DepthList != null && input.DepthList.Any(), x => input.DepthList.Contains(x.Depth))
                 .WhereIf(input.IsEnabledParentId, x => x.ParentId.Equals(input.ParentId))
-               //.WhereIf(!string.IsNullOrWhiteSpace(input.Keyword), x => x.Name.Contains(input.Keyword))
+                .WhereIf(!string.IsNullOrWhiteSpace(input.Keyword), x => x.Name.Contains(input.Keyword))
                ;
         }
 

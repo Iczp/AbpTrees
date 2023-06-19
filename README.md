@@ -1,6 +1,6 @@
 # IczpNet.AbpTrees
 
-
+An abp module that provides standard tree structure entity implement.
 
 ### Create project by Abp Cli
 
@@ -10,17 +10,21 @@ abp new IczpNet.AbpTreesDemo -t module --no-ui
 
 
 
-```
+### Build
 
 ```
-
-
-
-```
-dotnet nuget push "*.nupkg" --skip-duplicate -k oy2jmdqv6mthwoeqtddq222erkpxkvcejg3eth5sybb4fq --source https://api.nuget.org/v3/index.json
+dotnet build --configuration Release
 ```
 
-An abp module that provides standard tree structure entity implement.
+https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build
+
+### Public
+
+```
+dotnet nuget push "src/*/bin/Release/*0.1.17.nupkg" --skip-duplicate -k oy2jmdqv6mthwoeqtddq222erkpxkvcejg3eth5sybb4fq --source https://api.nuget.org/v3/index.json
+```
+
+
 
 ## Installation
 

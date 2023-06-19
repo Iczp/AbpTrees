@@ -1,6 +1,8 @@
-﻿using System;
+﻿using IczpNet.AbpTrees.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace IczpNet.AbpTrees
@@ -14,7 +16,7 @@ namespace IczpNet.AbpTrees
 
         Task<List<TTreeInfo>> GetManayByCacheAsync(List<TKey> idList);
 
-        Task<List<TTreeInfo>> GetAllByCacheAsync();
+        Task<PagedResultDto<TTreeInfo>> GetAllByCacheAsync(TreeGetListInput<TKey> input);
     }
 
     public interface ITreeAppService<TGetOutputDto, TGetListOutputDto, TKey, in TGetListInput, in TCreateInput, in TUpdateInput>
