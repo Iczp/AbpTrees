@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using IczpNet.AbpTrees.AbpTrees;
+using System.Collections.Generic;
 using Volo.Abp.Domain.Entities;
 
 namespace IczpNet.AbpTrees
@@ -18,7 +19,7 @@ namespace IczpNet.AbpTrees
     }
 
 
-    public interface ITreeEntity<TKey> : IEntity<TKey> where TKey : struct
+    public interface ITreeEntity<TKey> : IEntity<TKey>, ITree<TKey> where TKey : struct
     {
         string Name { get; }
         TKey? ParentId { get; }

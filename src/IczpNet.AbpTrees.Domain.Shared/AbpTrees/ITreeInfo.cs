@@ -1,6 +1,8 @@
-﻿namespace IczpNet.AbpTrees
+﻿using IczpNet.AbpTrees.AbpTrees;
+
+namespace IczpNet.AbpTrees
 {
-    public interface ITreeInfo<TKey> where TKey : struct
+    public interface ITreeInfo<TKey> : ITree<TKey> where TKey : struct
     {
         /// <summary>
         /// Id
