@@ -15,7 +15,7 @@ namespace IczpNet.AbpTrees.Dtos
         [DefaultValue(null)]
         public virtual TKey? ParentId { get; set; }
 
-        [DefaultValue("")]
+        [DefaultValue(null)]
         public virtual string Keyword { get; set; }
 
         public override string ToString()
