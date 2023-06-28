@@ -28,7 +28,7 @@ namespace IczpNet.AbpTrees
 
         Task DeleteManyAsync(List<TKey> idList);
 
-        Task<DateTime> RepairDataAsync();
+        Task<string> RepairDataAsync(int maxResultCount = 100, int skinCount = 0);
 
 
     }

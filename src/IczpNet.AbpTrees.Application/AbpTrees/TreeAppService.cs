@@ -3,6 +3,7 @@ using IczpNet.AbpTrees.Statics;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -116,23 +117,28 @@ namespace IczpNet.AbpTrees
             TreeManager = treeManager;
         }
 
-        protected override IQueryable<TEntity> ApplyDefaultSorting(IQueryable<TEntity> query)
-        {
-            return query.OrderByDescending(x => x.Sorting);
-        }
+
 
         [HttpGet]
-        public override Task<TGetOutputDto> GetAsync(TKey id)
+        public override async Task<TGetOutputDto> GetAsync(TKey id)
         {
-            return base.GetAsync(id);
+            await CheckGetPolicyAsync(id);
+
+            var entity = await GetEntityByIdAsync(id);
+
+            return await MapToGetOutputDtoAsync(entity);
         }
 
-
+        protected virtual Task CheckGetPolicyAsync(TKey id)
+        {
+            return CheckGetPolicyAsync();
+        }
 
         [HttpGet]
         public virtual async Task<List<TGetOutputDto>> GetManyAsync(List<TKey> idList)
         {
             var list = new List<TGetOutputDto>();
+
             foreach (var id in idList)
             {
                 list.Add(await GetAsync(id));
@@ -140,10 +146,39 @@ namespace IczpNet.AbpTrees
             return list;
         }
 
-        [HttpGet]
-        public override Task<PagedResultDto<TGetListOutputDto>> GetListAsync(TGetListInput input)
+        protected override IQueryable<TEntity> ApplyDefaultSorting(IQueryable<TEntity> query)
         {
-            return base.GetListAsync(input);
+            return query.OrderByDescending(x => x.Sorting);
+        }
+
+        [HttpGet]
+        public override async Task<PagedResultDto<TGetListOutputDto>> GetListAsync(TGetListInput input)
+        {
+            await CheckGetListPolicyAsync(input);
+
+            var query = await CreateFilteredQueryAsync(input);
+
+            var totalCount = await AsyncExecuter.CountAsync(query);
+
+            var entityDtos = new List<TGetListOutputDto>();
+
+            if (totalCount > 0)
+            {
+                query = ApplySorting(query, input);
+
+                query = ApplyPaging(query, input);
+
+                var entities = await AsyncExecuter.ToListAsync(query);
+
+                entityDtos = await MapToGetListOutputDtosAsync(entities);
+            }
+
+            return new PagedResultDto<TGetListOutputDto>(totalCount, entityDtos);
+        }
+
+        protected virtual Task CheckGetListPolicyAsync(TGetListInput input)
+        {
+            return CheckGetListPolicyAsync();
         }
 
         protected override async Task<IQueryable<TEntity>> CreateFilteredQueryAsync(TGetListInput input)
@@ -161,7 +196,7 @@ namespace IczpNet.AbpTrees
         [HttpPost]
         public override async Task<TGetOutputDto> CreateAsync(TCreateInput input)
         {
-            await CheckCreatePolicyAsync();
+            await CheckCreatePolicyAsync(input);
 
             var inputEntity = MapToEntity(input);
 
@@ -174,10 +209,15 @@ namespace IczpNet.AbpTrees
             return ObjectMapper.Map<TEntity, TGetOutputDto>(entity);
         }
 
+        protected virtual Task CheckCreatePolicyAsync(TCreateInput input)
+        {
+            return CheckCreatePolicyAsync();
+        }
+
         [HttpPost]
         public override async Task<TGetOutputDto> UpdateAsync(TKey id, TUpdateInput input)
         {
-            await CheckUpdatePolicyAsync();
+            await CheckUpdatePolicyAsync(id, input);
 
             var entity = await GetEntityByIdAsync(id);
 
@@ -192,12 +232,22 @@ namespace IczpNet.AbpTrees
             return await MapToGetOutputDtoAsync(entity);
         }
 
+        protected virtual Task CheckUpdatePolicyAsync(TKey id, TUpdateInput input)
+        {
+            return CheckUpdatePolicyAsync();
+        }
+
         [HttpPost]
         public override async Task DeleteAsync(TKey id)
         {
-            await CheckDeletePolicyAsync();
+            await CheckDeletePolicyAsync(id);
 
             await TreeManager.DeleteAsync(id);
+        }
+
+        protected virtual Task CheckDeletePolicyAsync(TKey id)
+        {
+            return CheckDeletePolicyAsync(id);
         }
 
         [HttpPost]
@@ -210,16 +260,18 @@ namespace IczpNet.AbpTrees
         }
 
         [HttpPost]
-        public virtual async Task<DateTime> RepairDataAsync()
+        public virtual async Task<string> RepairDataAsync(int maxResultCount = 100, int skinCount = 0)
         {
-            await CheckRepairDataPolicyAsync();
+            await CheckRepairDataPolicyAsync(maxResultCount, skinCount);
 
-            await TreeManager.RepairDataAsync();
+            var stopwatch = Stopwatch.StartNew();
 
-            return Clock.Now;
+            var affectsCount = await TreeManager.RepairDataAsync(maxResultCount, skinCount);
+
+            return $"AffectsCount:{affectsCount},MaxResultCount:{maxResultCount},SkinCount:{skinCount},stopwatch:{stopwatch.ElapsedMilliseconds}ms";
         }
 
-        protected virtual async Task CheckRepairDataPolicyAsync()
+        protected virtual async Task CheckRepairDataPolicyAsync(int maxResultCount = 100, int skinCount = 0)
         {
             await CheckPolicyAsync(RepairDataPolicyName);
         }

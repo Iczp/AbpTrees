@@ -21,7 +21,7 @@ https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build
 ### Public to Nuget.org
 
 ```
-dotnet nuget push "src/*/bin/Release/*0.1.20.nupkg" --skip-duplicate -k oy2jzhhivu7ts6g7h2eatzmikigi4lmuvprulkzoqydow4 --source https://api.nuget.org/v3/index.json
+dotnet nuget push "src/*/bin/Release/*0.1.21.nupkg" --skip-duplicate -k oy2icgz2tg4dxcysp7mqvfe3g6x5tf3unaokc4bjdh4i3y --source https://api.nuget.org/v3/index.json
 ```
 
 

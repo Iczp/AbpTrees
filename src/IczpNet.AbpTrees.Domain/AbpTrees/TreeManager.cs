@@ -252,7 +252,7 @@ namespace IczpNet.AbpTrees
 
                 inputEntity.SetParent(parent);
 
-                await UpdateParentChildrenCountAsync(new List<TKey> { parent.Id});
+                await UpdateParentChildrenCountAsync(new List<TKey> { parent.Id });
             }
             else
             {
@@ -384,9 +384,13 @@ namespace IczpNet.AbpTrees
                 .ToList();
         }
 
-        public virtual async Task RepairDataAsync()
+        public virtual async Task<int> RepairDataAsync(int maxResultCount = 100, int skinCount = 0)
         {
-            var list = await Repository.GetListAsync(x => x.ParentId == null);
+            var list = (await Repository.GetQueryableAsync())
+                .Where(x => x.ParentId == null)
+                .Skip(skinCount)
+                .Take(maxResultCount)
+                ;
 
             foreach (var entity in list)
             {
@@ -394,6 +398,8 @@ namespace IczpNet.AbpTrees
 
                 await UpdateAsync(entity, entity.ParentId);
             }
+
+            return list.Count();
         }
 
         protected virtual Task SetEntityAsync(T entity)
