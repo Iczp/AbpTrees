@@ -12,7 +12,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.5" />
     <ProjectReference Include="..\..\src\IczpNet.AbpTreesDemo.EntityFrameworkCore\IczpNet.AbpTreesDemo.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\IczpNet.AbpTreesDemo.TestBase\IczpNet.AbpTreesDemo.TestBase.csproj" />
-    <PackageReference Include="Volo.Abp.EntityFrameworkCore.Sqlite" Version="7.1.0" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore.Sqlite" Version="7.3.0" />
   </ItemGroup>
 
   <ItemGroup>

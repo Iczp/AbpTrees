@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.5" />
-    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="7.1.0" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="7.3.0" />
     <ProjectReference Include="..\IczpNet.AbpTreesDemo.Domain\IczpNet.AbpTreesDemo.Domain.csproj" />
   </ItemGroup>
 
