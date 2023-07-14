@@ -1,6 +1,5 @@
 ﻿using IczpNet.AbpTrees.Dtos;
 using IczpNet.AbpTrees.Statics;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -37,19 +36,19 @@ namespace IczpNet.AbpTrees
             TreeManager = treeManager;
         }
 
-        [HttpGet]
+        //[HttpGet]
         public virtual Task<TTreeInfo> GetItemByCacheAsync(TKey id)
         {
             return TreeManager.GetItemByCacheAsync(id);
         }
 
-        [HttpGet]
+        //[HttpGet]
         public virtual Task<List<TTreeInfo>> GetManayByCacheAsync(List<TKey> idList)
         {
             return TreeManager.GetManyByCacheAsync(idList);
         }
 
-        [HttpGet]
+        //[HttpGet]
         [RemoteService]
         public virtual async Task<PagedResultDto<TTreeInfo>> GetAllByCacheAsync(TreeGetListInput<TKey> input)
         {
@@ -119,7 +118,7 @@ namespace IczpNet.AbpTrees
 
 
 
-        [HttpGet]
+        //[HttpGet]
         public override async Task<TGetOutputDto> GetAsync(TKey id)
         {
             await CheckGetPolicyAsync(id);
@@ -134,7 +133,7 @@ namespace IczpNet.AbpTrees
             return CheckGetPolicyAsync();
         }
 
-        [HttpGet]
+        //[HttpGet]
         public virtual async Task<List<TGetOutputDto>> GetManyAsync(List<TKey> idList)
         {
             var list = new List<TGetOutputDto>();
@@ -151,7 +150,7 @@ namespace IczpNet.AbpTrees
             return query.OrderByDescending(x => x.Sorting);
         }
 
-        [HttpGet]
+        //[HttpGet]
         public override async Task<PagedResultDto<TGetListOutputDto>> GetListAsync(TGetListInput input)
         {
             await CheckGetListPolicyAsync(input);
@@ -193,7 +192,7 @@ namespace IczpNet.AbpTrees
         }
 
 
-        [HttpPost]
+        //[HttpPost]
         public override async Task<TGetOutputDto> CreateAsync(TCreateInput input)
         {
             await CheckCreatePolicyAsync(input);
@@ -214,7 +213,7 @@ namespace IczpNet.AbpTrees
             return CheckCreatePolicyAsync();
         }
 
-        [HttpPost]
+        //[HttpPost]
         public override async Task<TGetOutputDto> UpdateAsync(TKey id, TUpdateInput input)
         {
             await CheckUpdatePolicyAsync(id, input);
@@ -237,7 +236,7 @@ namespace IczpNet.AbpTrees
             return CheckUpdatePolicyAsync();
         }
 
-        [HttpPost]
+        //[HttpPost]
         public override async Task DeleteAsync(TKey id)
         {
             await CheckDeletePolicyAsync(id);
@@ -250,7 +249,7 @@ namespace IczpNet.AbpTrees
             return CheckDeletePolicyAsync(id);
         }
 
-        [HttpPost]
+        //[HttpPost]
         public virtual async Task DeleteManyAsync(List<TKey> idList)
         {
             foreach (var id in idList)
@@ -259,7 +258,7 @@ namespace IczpNet.AbpTrees
             }
         }
 
-        [HttpPost]
+        //[HttpPost]
         public virtual async Task<string> RepairDataAsync(int maxResultCount = 100, int skinCount = 0)
         {
             await CheckRepairDataPolicyAsync(maxResultCount, skinCount);

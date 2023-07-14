@@ -1,13 +1,13 @@
 ﻿using IczpNet.AbpTrees;
 using IczpNet.AbpTreesDemo.Departments.Dtos;
-using Microsoft.AspNetCore.Mvc;
+//using Microsoft.AspNetCore.Mvc;
 using System;
 using Volo.Abp.Domain.Repositories;
 
 namespace IczpNet.AbpTreesDemo.Departments
 {
 
-    [Route($"Api/App/{AbpTreesDemoRemoteServiceConsts.ModuleName}/[Controller]/[Action]")]
+    //[Route($"Api/App/{AbpTreesDemoRemoteServiceConsts.ModuleName}/[Controller]/[Action]")]
     public class DepartmentAppService
         : TreeAppService<
             Department,
