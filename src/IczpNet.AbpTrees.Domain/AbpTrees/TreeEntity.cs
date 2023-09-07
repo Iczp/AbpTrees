@@ -116,6 +116,7 @@ namespace IczpNet.AbpTrees
 
         public virtual void SetName(string name)
         {
+            Assert.If(name.IndexOf(GetSplitString()) != -1, $"The character '{GetSplitString()}' is not allowed");
             Name = name;
         }
 
