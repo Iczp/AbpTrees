@@ -1,7 +1,6 @@
 ﻿using IczpNet.AbpTrees.Statics;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -84,7 +83,7 @@ namespace IczpNet.AbpTrees
 
         protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetRequiredService<IObjectMapper>();
         protected IDistributedCache<List<TOutput>> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<List<TOutput>>>();
-        protected IDistributedCache<TOutput> ItemCache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<TOutput>>();
+        protected IDistributedCache<TOutput, TKey> ItemCache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<TOutput, TKey>>();
 
         protected IUnitOfWork CurrentUnitOfWork => UnitOfWorkManager?.Current;
         public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
@@ -92,6 +91,11 @@ namespace IczpNet.AbpTrees
         public override Task RemoveCacheAsync()
         {
             return Cache.RemoveAsync(CacheKey);
+        }
+
+        public override async Task RemoveItemCacheAsync(TKey id)
+        {
+            await ItemCache.RemoveAsync(id);
         }
 
         public virtual Task<List<TOutput>> GetAllByCacheAsync()
@@ -112,7 +116,7 @@ namespace IczpNet.AbpTrees
 
         public virtual Task<TOutput> GetItemByCacheAsync(TKey id)
         {
-            return ItemCache.GetOrAddAsync(id.ToString(), async () =>
+            return ItemCache.GetOrAddAsync(id, async () =>
             {
                 var entity = await GetAsync(id);
 
@@ -322,11 +326,21 @@ namespace IczpNet.AbpTrees
                 .Select(x => x.Value)
                 .Distinct()
                 .ToList();
+
             await UpdateParentChildrenCountAsync(idList);
 
+            foreach (var id in idList)
+            {
+                await RemoveItemCacheAsync(id);
+            }
             await RemoveCacheAsync();
 
             return inputEntity;
+        }
+
+        public virtual async Task RemoveItemCacheAsync(TKey id)
+        {
+            await Task.Yield();
         }
 
         public virtual async Task UpdateParentChildrenCountAsync(List<TKey> parentIdList)
