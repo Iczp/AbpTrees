@@ -258,14 +258,21 @@ namespace IczpNet.AbpTrees
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="maxResultCount"></param>
+        /// <param name="skinCount"></param>
+        /// <param name="sorting">Default sorting: LastModificationTime Desc</param>
+        /// <returns></returns>
         //[HttpPost]
-        public virtual async Task<string> RepairDataAsync(int maxResultCount = 100, int skinCount = 0)
+        public virtual async Task<string> RepairDataAsync(int maxResultCount = 100, int skinCount = 0, string sorting = null)
         {
             await CheckRepairDataPolicyAsync(maxResultCount, skinCount);
 
             var stopwatch = Stopwatch.StartNew();
 
-            var affectsCount = await TreeManager.RepairDataAsync(maxResultCount, skinCount);
+            var affectsCount = await TreeManager.RepairDataAsync(maxResultCount, skinCount, sorting);
 
             return $"AffectsCount:{affectsCount},MaxResultCount:{maxResultCount},SkinCount:{skinCount},stopwatch:{stopwatch.ElapsedMilliseconds}ms";
         }

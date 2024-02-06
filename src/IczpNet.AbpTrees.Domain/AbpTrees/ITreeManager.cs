@@ -80,6 +80,6 @@ namespace IczpNet.AbpTrees
         /// <returns></returns>
         Task<List<T>> GetChildsAsync(TKey? entityId);
 
-        Task<int> RepairDataAsync(int maxResultCount = 100, int skinCount = 0);
+        Task<int> RepairDataAsync(int maxResultCount = 100, int skinCount = 0, string sorting = null);
     }
 }

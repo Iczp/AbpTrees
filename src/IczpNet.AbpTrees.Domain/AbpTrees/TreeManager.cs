@@ -1,6 +1,7 @@
 ﻿using IczpNet.AbpTrees.Statics;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,9 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
 using Volo.Abp.Uow;
+using System.Linq.Dynamic.Core;
+using Volo.Abp.Auditing;
+using Volo.Abp.MultiTenancy;
 
 namespace IczpNet.AbpTrees
 {
@@ -357,13 +361,25 @@ namespace IczpNet.AbpTrees
             }
         }
 
-        protected virtual async Task ChangeChildsAsync(T entiy)
-        {
-            Logger.LogInformation($"ChangeChilds id:{entiy.Id}");
 
-            foreach (var item in entiy.Childs)
+        protected virtual void TryToSetLastModificationTime(T entity, DateTime? lastModificationTime) 
+        {
+            var propertyInfo = entity.GetType().GetProperty(nameof(IHasModificationTime.LastModificationTime));
+
+            if (entity is IHasModificationTime && propertyInfo != null && propertyInfo.GetSetMethod(true) != null)
             {
-                item.SetParent(entiy);
+                propertyInfo.SetValue(entity, lastModificationTime);
+            }
+        }
+        protected virtual async Task ChangeChildsAsync(T entity)
+        {
+            Logger.LogInformation($"ChangeChilds id:{entity.Id}");
+
+            TryToSetLastModificationTime(entity, Clock.Now);
+
+            foreach (var item in entity.Childs)
+            {
+                item.SetParent(entity);
 
                 await ChangeChildsAsync(item);
             }
@@ -398,22 +414,46 @@ namespace IczpNet.AbpTrees
                 .ToList();
         }
 
-        public virtual async Task<int> RepairDataAsync(int maxResultCount = 100, int skinCount = 0)
+        public virtual async Task<int> RepairDataAsync(int maxResultCount = 100, int skinCount = 0, string sorting = null)
         {
-            var list = (await Repository.GetQueryableAsync())
+            var query = (await Repository.GetQueryableAsync())
                 .Where(x => x.ParentId == null)
-                .Skip(skinCount)
-                .Take(maxResultCount)
-                ;
 
-            foreach (var entity in list)
+                ;
+            var totalCount = await AsyncExecuter.CountAsync(query);
+
+            if (totalCount == 0)
+            {
+                return 0;
+            }
+            // apply sorting
+
+            if (!sorting.IsNullOrWhiteSpace())
+            {
+                query = query.OrderBy(sorting);
+            }
+            // default sorting
+            else if (typeof(T).IsAssignableTo<IHasModificationTime>())
+            {
+                query = query.OrderBy(e => ((IHasModificationTime)e).LastModificationTime);
+            }
+
+            // apply paged
+            query = query.PageBy(skinCount, maxResultCount);
+            //query = query
+            //    .Skip(skinCount)
+            //    .Take(maxResultCount);
+
+            var entities = await AsyncExecuter.ToListAsync(query);
+
+            foreach (var entity in entities)
             {
                 await SetEntityAsync(entity);
 
                 await UpdateAsync(entity, entity.ParentId);
             }
 
-            return list.Count();
+            return entities.Count;
         }
 
         protected virtual Task SetEntityAsync(T entity)
