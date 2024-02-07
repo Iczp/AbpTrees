@@ -80,6 +80,21 @@ namespace IczpNet.AbpTrees
         /// <returns></returns>
         Task<List<T>> GetChildsAsync(TKey? entityId);
 
+        /// <summary>
+        /// 查找根节点下的所有子节点
+        /// </summary>
+        /// <param name="id">树下的任意节点Id</param>
+        /// <returns></returns>
+        Task<IQueryable<T>> QueryRootChildrenAsync(TKey id);
+
+        /// <summary>
+        /// 获取根节点下的所有子节点
+        /// </summary>
+        /// <param name="id">树下的任意节点Id</param>
+        /// <returns></returns>
+        Task<List<T>> GetRootChildrenAsync(TKey id);
+
+
         Task<int> RepairDataAsync(int maxResultCount = 100, int skinCount = 0, string sorting = null);
     }
 }

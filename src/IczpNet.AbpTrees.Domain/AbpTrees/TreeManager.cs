@@ -184,7 +184,7 @@ namespace IczpNet.AbpTrees
 
             foreach (var fullPath in fullPaths)
             {
-                entityPredicate = entityPredicate.Or(x => (x.FullPath + "/").StartsWith(fullPath + "/"));
+                entityPredicate = entityPredicate.Or(x => (x.FullPath + AbpTreesConsts.SplitPath).StartsWith(fullPath + AbpTreesConsts.SplitPath));
             }
 
             var entityIdQuery = (await Repository.GetQueryableAsync()).Where(entityPredicate);
@@ -199,9 +199,9 @@ namespace IczpNet.AbpTrees
             return QueryCurrentAndAllChildsAsync(new List<string>() { fullPath });
         }
 
-        public virtual Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(TKey departmentId)
+        public virtual Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(TKey id)
         {
-            return QueryCurrentAndAllChildsAsync(new List<TKey>() { departmentId });
+            return QueryCurrentAndAllChildsAsync(new List<TKey>() { id });
         }
 
         public virtual Task RemoveCacheAsync()
@@ -362,7 +362,7 @@ namespace IczpNet.AbpTrees
         }
 
 
-        protected virtual void TryToSetLastModificationTime(T entity, DateTime? lastModificationTime) 
+        protected virtual void TryToSetLastModificationTime(T entity, DateTime? lastModificationTime)
         {
             var propertyInfo = entity.GetType().GetProperty(nameof(IHasModificationTime.LastModificationTime));
 
@@ -407,7 +407,7 @@ namespace IczpNet.AbpTrees
 
         public virtual async Task<List<T>> GetChildsAsync(TKey? entityId)
         {
-            //return await Repository.GetListAsync(x => x.ParentId == departmentId);
+            //return await Repository.GetListAsync(x => x.ParentId == id);
             return (await Repository.GetQueryableAsync())
                 .Where(x => x.ParentId.Equals(entityId))
                 .OrderByDescending(x => x.Sorting)
@@ -463,6 +463,53 @@ namespace IczpNet.AbpTrees
             entity.SetName(entity.Name);
 
             return Task.CompletedTask;
+        }
+
+        public virtual TKey GetRootId(string fullPath)
+        {
+            var rootId = fullPath.Split(AbpTreesConsts.SplitPath)
+                .Where(x => !x.IsNullOrWhiteSpace())
+                .FirstOrDefault();
+            return ChangeType(rootId);
+        }
+
+        protected virtual TKey ChangeType(object value)
+        {
+            if (typeof(TKey) == typeof(Guid))
+            {
+                value = Guid.Parse(value.ToString());
+            }
+            return (TKey)Convert.ChangeType(value, typeof(TKey));
+        }
+
+        public virtual async Task<IQueryable<T>> QueryRootChildrenAsync(TKey id)
+        {
+            var entity = await GetAsync(id);
+
+            var fullPath = entity.FullPath;
+
+            var rootId = GetRootId(fullPath);
+
+            Logger.LogDebug($"QueryRootChildrenAsync id:{id},rootId:{rootId}");
+
+            var entityPredicate = PredicateBuilder.New<T>();
+
+            entityPredicate = entityPredicate.And(x => (x.FullPath + AbpTreesConsts.SplitPath).StartsWith(rootId + AbpTreesConsts.SplitPath));
+
+            var entityIdQuery = (await Repository.GetQueryableAsync()).Where(entityPredicate);
+
+            return entityIdQuery;
+        }
+
+        public virtual async Task<List<T>> GetRootChildrenAsync(TKey id)
+        {
+            var query = await QueryRootChildrenAsync(id);
+
+            query = query.OrderBy(x => x.Depth);
+
+            var list = await AsyncExecuter.ToListAsync(query);
+
+            return list;
         }
     }
 }

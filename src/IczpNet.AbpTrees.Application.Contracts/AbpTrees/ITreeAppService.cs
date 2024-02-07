@@ -26,6 +26,8 @@ namespace IczpNet.AbpTrees
 
         Task<List<TGetOutputDto>> GetManyAsync(List<TKey> idList);
 
+        Task<List<TGetOutputDto>> GetRootChildrenAsync(TKey id);
+
         Task DeleteManyAsync(List<TKey> idList);
 
         Task<string> RepairDataAsync(int maxResultCount = 100, int skinCount = 0, string sorting = null);

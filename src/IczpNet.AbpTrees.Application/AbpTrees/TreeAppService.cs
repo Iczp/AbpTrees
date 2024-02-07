@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 
 namespace IczpNet.AbpTrees
@@ -101,6 +102,8 @@ namespace IczpNet.AbpTrees
 
     {
         protected virtual string RepairDataPolicyName { get; set; }
+
+        protected virtual string GetRootChildrenPolicyName { get; set; }
 
         protected virtual ITreeManager<TEntity, TKey> TreeManager { get; }
 
@@ -280,6 +283,21 @@ namespace IczpNet.AbpTrees
         protected virtual async Task CheckRepairDataPolicyAsync(int maxResultCount = 100, int skinCount = 0)
         {
             await CheckPolicyAsync(RepairDataPolicyName);
+        }
+
+        public async Task<List<TGetOutputDto>> GetRootChildrenAsync(TKey id)
+        {
+            await CheckPolicyAsync(GetRootChildrenPolicyName);
+
+            var entities = await TreeManager.GetRootChildrenAsync(id);
+
+            var list = new List<TGetOutputDto>();
+
+            foreach (var entity in entities)
+            {
+                list.Add(await MapToGetOutputDtoAsync(entity));
+            }
+            return list;
         }
     }
 }
