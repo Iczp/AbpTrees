@@ -8,24 +8,6 @@ An abp module that provides standard tree structure entity implement.
 abp new IczpNet.AbpTreesDemo -t module --no-ui
 ```
 
-
-
-### Build
-
-```
-dotnet build --configuration Release
-```
-
-https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build
-
-### Public to Nuget.org
-
-```
-dotnet nuget push "src/*/bin/Release/*0.2.3.nupkg" --skip-duplicate -k oy2jz3nldpaffphki5oawikll3py4alubf7wh2dl6g5hqq --source https://api.nuget.org/v3/index.json
-```
-
-
-
 ## Installation
 
 #### Install the following NuGet packages. (see how)
