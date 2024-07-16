@@ -3,20 +3,20 @@
     <Import Project="..\..\common.props" />
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
         <RootNamespace>IczpNet.AbpTrees</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
 			<Authors>IczpNet</Authors>
 			<RepositoryUrl>https://github.com/Iczp/AbpTrees.git</RepositoryUrl>
 			<PackageProjectUrl>https://github.com/Iczp/AbpTrees.git</PackageProjectUrl>
-			<Version>0.2.4</Version>
+			<Version>8.2.0.1</Version>
 			<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 			<GenerateDocumentationFile>True</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Volo.Abp.VirtualFileSystem" Version="7.3.0" />
+        <PackageReference Include="Volo.Abp.VirtualFileSystem" Version="8.2.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -33,7 +33,7 @@
 
     <ItemGroup>
       <PackageReference Update="ConfigureAwait.Fody" Version="3.3.2" />
-      <PackageReference Update="Fody" Version="6.7.0">
+      <PackageReference Update="Fody" Version="6.8.1">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       </PackageReference>

@@ -3,13 +3,13 @@
   <Import Project="..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>IczpNet.AbpTreesDemo</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.AutoMapper" Version="7.3.0" />
-    <PackageReference Include="Volo.Abp.Ddd.Application" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.AutoMapper" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.Ddd.Application" Version="8.2.0" />
     <ProjectReference Include="..\..\..\src\IczpNet.AbpTrees.Application\IczpNet.AbpTrees.Application.csproj" />
     <ProjectReference Include="..\IczpNet.AbpTreesDemo.Application.Contracts\IczpNet.AbpTreesDemo.Application.Contracts.csproj" />
     <ProjectReference Include="..\IczpNet.AbpTreesDemo.Domain\IczpNet.AbpTreesDemo.Domain.csproj" />
@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Update="ConfigureAwait.Fody" Version="3.3.2" />
-    <PackageReference Update="Fody" Version="6.7.0">
+    <PackageReference Update="Fody" Version="6.8.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

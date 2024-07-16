@@ -9,7 +9,7 @@
 		<Authors>IczpNet</Authors>
 		<RepositoryUrl>https://github.com/Iczp/AbpTrees.git</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/Iczp/AbpTrees.git</PackageProjectUrl>
-		<Version>0.2.4</Version>
+		<Version>8.2.0.1</Version>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
@@ -22,14 +22,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="7.3.0" />
-    <PackageReference Include="Volo.Abp.Authorization" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="8.2.0" />
+    <PackageReference Include="Volo.Abp.Authorization" Version="8.2.0" />
     <ProjectReference Include="..\IczpNet.AbpTrees.Domain.Shared\IczpNet.AbpTrees.Domain.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Update="ConfigureAwait.Fody" Version="3.3.2" />
-    <PackageReference Update="Fody" Version="6.8.0">
+    <PackageReference Update="Fody" Version="6.8.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
