@@ -14,7 +14,7 @@
 		<Authors>IczpNet</Authors>
 		<PackageIcon>IczpNet.jpg</PackageIcon>
 		<Copyright>(c) iczp.net</Copyright>
-		<Description>copyright (c) www.iczp.net</Description>
+		<Description>Trees module for abp</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
