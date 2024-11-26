@@ -64,7 +64,7 @@ if ($?) {
 }
 
 Write-Host "更新Abp" -ForegroundColor Cyan
-
+Write-Host "abp update" -ForegroundColor Cyan
 abp update
 # dotnet build --configuration Release
 # if ($?) {
