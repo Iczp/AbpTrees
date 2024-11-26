@@ -3,9 +3,9 @@
 	<Import Project="..\..\common.props" />
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>IczpNet.AbpTrees</RootNamespace>
-		<Version>8.2.0.3</Version>
+		<Version>9.0.0.0</Version>
 		<RepositoryUrl>https://github.com/Iczp/AbpTrees.git</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/Iczp/AbpTrees.git</PackageProjectUrl>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -29,15 +29,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Volo.Abp.AutoMapper" Version="8.2.0" />
-		<PackageReference Include="Volo.Abp.Ddd.Application" Version="8.2.0" />
+		<PackageReference Include="Volo.Abp.AutoMapper" Version="9.0.0" />
+		<PackageReference Include="Volo.Abp.Ddd.Application" Version="9.0.0" />
+		<PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="9.0.0" />
+		<PackageReference Include="Volo.Abp.VirtualFileSystem" Version="9.0.0" />
 		<ProjectReference Include="..\IczpNet.AbpTrees.Application.Contracts\IczpNet.AbpTrees.Application.Contracts.csproj" />
 		<ProjectReference Include="..\IczpNet.AbpTrees.Domain\IczpNet.AbpTrees.Domain.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Update="ConfigureAwait.Fody" Version="3.3.2" />
-		<PackageReference Update="Fody" Version="6.8.1">
+		<PackageReference Update="Fody" Version="6.9.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
