@@ -6,7 +6,7 @@ namespace IczpNet.AbpTrees;
 
 public interface ITreeEntity<T, TKey> : ITreeEntity<TKey>
     where T : ITreeEntity<TKey>
-    //where TKey : struct
+    where TKey : struct
 {
     T Parent { get; }
     IEnumerable<T> Childs { get; }
@@ -19,7 +19,7 @@ public interface ITreeEntity<T, TKey> : ITreeEntity<TKey>
 }
 
 
-public interface ITreeEntity<TKey> : IEntity<TKey>, ITree<TKey> //where TKey : struct
+public interface ITreeEntity<TKey> : IEntity<TKey>, ITree<TKey> where TKey : struct
 {
     string Name { get; }
     TKey? ParentId { get; }

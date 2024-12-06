@@ -3,7 +3,7 @@
 /// <summary>
 /// TreeInfo
 /// </summary>
-public class TreeInfo<TKey> : ITreeInfo<TKey> //where TKey : struct
+public class TreeInfo<TKey> : ITreeInfo<TKey> where TKey : struct
 {
     /// <summary>
     /// Id
