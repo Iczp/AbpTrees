@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace IczpNet.AbpTrees
+namespace IczpNet.AbpTrees;
+
+public interface ITreeWithChildsInfo<T> //: ITreeInfo<TKey> where TKey : struct
 {
-    public interface ITreeWithChildsInfo<T> //: ITreeInfo<TKey> where TKey : struct
-    {
-        List<T> Childs { get; set; }
-    }
+    List<T> Childs { get; set; }
 }
