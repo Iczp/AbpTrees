@@ -52,7 +52,7 @@ public abstract class TreeEntity<T, TKey> : FullAuditedAggregateRoot<TKey>, ITre
     /// <summary>
     /// 子级数量
     /// </summary>
-    public virtual int ChildrenCount { get; set; }
+    public virtual int ChildrenCount { get; protected set; }
 
     /// <summary>
     /// 排序
