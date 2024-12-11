@@ -1,18 +1,16 @@
 ﻿using IczpNet.AbpTrees.Statics;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using Volo.Abp.Auditing;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.ObjectMapping;
 using Volo.Abp.Uow;
-using System.Linq.Dynamic.Core;
-using Volo.Abp.Auditing;
-using Volo.Abp.MultiTenancy;
 
 namespace IczpNet.AbpTrees;
 
@@ -196,12 +194,12 @@ public class TreeManager<T, TKey> : DomainService, ITreeManager<T, TKey>
     }
     public virtual Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(string fullPath)
     {
-        return QueryCurrentAndAllChildsAsync(new List<string>() { fullPath });
+        return QueryCurrentAndAllChildsAsync([fullPath]);
     }
 
     public virtual Task<IQueryable<T>> QueryCurrentAndAllChildsAsync(TKey id)
     {
-        return QueryCurrentAndAllChildsAsync(new List<TKey>() { id });
+        return QueryCurrentAndAllChildsAsync([id]);
     }
 
     public virtual Task RemoveCacheAsync()
@@ -260,7 +258,7 @@ public class TreeManager<T, TKey> : DomainService, ITreeManager<T, TKey>
 
             inputEntity.SetParent(parent);
 
-            await UpdateParentChildrenCountAsync(new List<TKey> { parent.Id });
+            await UpdateParentChildrenCountAsync([parent.Id]);
         }
         else
         {
