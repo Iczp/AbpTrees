@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<Import Project="..\..\common.props" />
 
@@ -6,7 +6,7 @@
 		<!--<TargetFramework>net9.0</TargetFramework>-->
 		<TargetFrameworks>netstandard2.0;netstandard2.1;net9.0</TargetFrameworks>
 		<RootNamespace>IczpNet.AbpTrees</RootNamespace>
-		<Version>9.0.0.903</Version>
+		<Version>9.0.1.903</Version>
 		<RepositoryUrl>https://github.com/Iczp/AbpTrees.git</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/Iczp/AbpTrees.git</PackageProjectUrl>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
