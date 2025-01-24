@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace IczpNet.AbpTrees.Dtos
+namespace IczpNet.AbpTrees.Dtos;
+
+public interface ITreeGetListInput<TKey> where TKey : struct
 {
-    public interface ITreeGetListInput<TKey> where TKey : struct
-    {
-        bool IsEnabledParentId { get; set; }
+    bool IsEnabledParentId { get; set; }
 
-        List<int> DepthList { get; set; }
+    List<int> DepthList { get; set; }
 
-        TKey? ParentId { get; set; }
+    TKey? ParentId { get; set; }
 
-        string Keyword { get; set; }
-    }
+    string Keyword { get; set; }
 }

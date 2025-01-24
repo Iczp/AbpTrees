@@ -1,7 +1,6 @@
-﻿namespace IczpNet.AbpTrees
+﻿namespace IczpNet.AbpTrees;
+
+public interface ITreeWithParentInfo<T> //: ITreeInfo
 {
-    public interface ITreeWithParentInfo<T> //: ITreeInfo
-    {
-        T Parent { get; set; }
-    }
+    T Parent { get; set; }
 }
