@@ -1,10 +1,9 @@
-﻿namespace IczpNet.AbpTrees.AbpTrees
-{
-    public interface ITree<TKey> where TKey : struct
-    {
-    }
+﻿namespace IczpNet.AbpTrees.AbpTrees;
 
-    public interface ITree
-    {
-    }
+public interface ITree<TKey> where TKey : struct
+{
+}
+
+public interface ITree
+{
 }

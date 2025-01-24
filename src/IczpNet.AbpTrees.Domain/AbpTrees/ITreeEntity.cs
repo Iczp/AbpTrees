@@ -2,32 +2,31 @@
 using System.Collections.Generic;
 using Volo.Abp.Domain.Entities;
 
-namespace IczpNet.AbpTrees
+namespace IczpNet.AbpTrees;
+
+public interface ITreeEntity<T, TKey> : ITreeEntity<TKey>
+    where T : ITreeEntity<TKey>
+    where TKey : struct
 {
-    public interface ITreeEntity<T, TKey> : ITreeEntity<TKey>
-        where T : ITreeEntity<TKey>
-        where TKey : struct
-    {
-        T Parent { get; }
-        IEnumerable<T> Childs { get; }
-        int ChildrenCount { get; }
-        void SetChildrenCount(int childrenCount);
-        void SetName(string name);
-        void SetParent(T parent);
-        //void SetParentId(TKey? parentId);
+    T Parent { get; }
+    IEnumerable<T> Childs { get; }
+    int ChildrenCount { get; }
+    void SetChildrenCount(int childrenCount);
+    void SetName(string name);
+    void SetParent(T parent);
+    //void SetParentId(TKey? parentId);
 
-    }
+}
 
 
-    public interface ITreeEntity<TKey> : IEntity<TKey>, ITree<TKey> where TKey : struct
-    {
-        string Name { get; }
-        TKey? ParentId { get; }
-        string FullPath { get; }
-        string FullPathName { get; }
-        int Depth { get; }
-        double Sorting { get; set; }
-        string Description { get; set; }
-        string GetSplitString();
-    }
+public interface ITreeEntity<TKey> : IEntity<TKey>, ITree<TKey> where TKey : struct
+{
+    string Name { get; }
+    TKey? ParentId { get; }
+    string FullPath { get; }
+    string FullPathName { get; }
+    int Depth { get; }
+    double Sorting { get; set; }
+    string Description { get; set; }
+    string GetSplitString();
 }

@@ -1,7 +1,6 @@
-﻿namespace IczpNet.AbpTrees
+﻿namespace IczpNet.AbpTrees;
+
+public class DeleteTreeCacheEto
 {
-    public class DeleteTreeCacheEto
-    {
-        public string CacheName { get; set; }
-    }
+    public string CacheName { get; set; }
 }
