@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<Import Project="..\..\common.props" />
 
@@ -30,9 +30,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="9.0.0" />
-		<PackageReference Include="Volo.Abp.Authorization" Version="9.0.0" />
-		<PackageReference Include="Volo.Abp.VirtualFileSystem" Version="9.0.0" />
+		<PackageReference Include="Volo.Abp.Ddd.Application.Contracts" Version="9.0.3" />
+		<PackageReference Include="Volo.Abp.Authorization" Version="9.0.3" />
+		<PackageReference Include="Volo.Abp.VirtualFileSystem" Version="9.0.3" />
 		<ProjectReference Include="..\IczpNet.AbpTrees.Domain.Shared\IczpNet.AbpTrees.Domain.Shared.csproj" />
 	</ItemGroup>
 
