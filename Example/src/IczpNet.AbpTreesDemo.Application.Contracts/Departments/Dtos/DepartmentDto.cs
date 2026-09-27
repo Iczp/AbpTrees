@@ -7,5 +7,7 @@ namespace IczpNet.AbpTreesDemo.Departments.Dtos
     {
         public virtual double Sorting { get; set; }
         public virtual string Description { get; set; }
+
+        public virtual string GetObjectKey() => $"{Id}";
     }
 }
