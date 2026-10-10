@@ -1,4 +1,4 @@
-﻿using IczpNet.AbpTrees.Dtos;
+using IczpNet.AbpTrees.Dtos;
 using IczpNet.AbpTrees.Statics;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -206,7 +206,7 @@ public abstract class TreeAppService<TEntity, TKey, TGetOutputDto, TGetListOutpu
 
         var entity = await TreeManager.CreateAsync(inputEntity, true);
 
-        return ObjectMapper.Map<TEntity, TGetOutputDto>(entity);
+        return await MapToGetOutputDtoAsync(entity);
     }
 
     protected virtual Task CheckCreatePolicyAsync(TCreateInput input)

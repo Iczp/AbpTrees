@@ -1,10 +1,11 @@
-﻿using IczpNet.AbpTrees.Statics;
+using IczpNet.AbpTrees.Statics;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Auditing;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Repositories;
@@ -23,10 +24,43 @@ public class TreeManager<T, TKey, TOutput, TWithChildsOuput, TWithParentOuput> :
 {
     public TreeManager(IRepository<T, TKey> repository) : base(repository) { }
 
-    public async Task<TWithParentOuput> GetWithParentAsync(TKey id)
+    public virtual async Task<TWithParentOuput> GetWithParentAsync(TKey id)
     {
         var entity = await GetAsync(id);
-        return ObjectMapper.Map<T, TWithParentOuput>(entity);
+        return await MapToWithParentOuputAsync(entity);
+    }
+
+    protected virtual Task<TWithParentOuput> MapToWithParentOuputAsync(T entity)
+    {
+        if (entity == null)
+        {
+            return Task.FromResult<TWithParentOuput>(null);
+        }
+
+        if (ObjectMapper != null)
+        {
+            return Task.FromResult(ObjectMapper.Map<T, TWithParentOuput>(entity));
+        }
+
+        if (Activator.CreateInstance(typeof(TWithParentOuput)) is ITreeWithParentInfo<TWithParentOuput> item)
+        {
+            if (item is ITreeInfo<TKey> treeItem)
+            {
+                treeItem.Id = entity.Id;
+                treeItem.ParentId = entity.ParentId;
+                treeItem.Name = entity.Name;
+                treeItem.Depth = entity.Depth;
+                treeItem.FullPath = entity.FullPath;
+                treeItem.FullPathName = entity.FullPathName;
+                if (treeItem is TreeInfo<TKey> ti)
+                {
+                    ti.ChildrenCount = entity.ChildrenCount;
+                }
+            }
+            return Task.FromResult((TWithParentOuput)item);
+        }
+
+        throw new AbpException($"No IObjectMapper registered and cannot map {typeof(T).FullName} to {typeof(TWithParentOuput).FullName}");
     }
 }
 public class TreeManager<T, TKey, TOutput, TWithChildsOuput> : TreeManager<T, TKey, TOutput>, ITreeManager<T, TKey, TOutput, TWithChildsOuput>
@@ -55,7 +89,7 @@ public class TreeManager<T, TKey, TOutput, TWithChildsOuput> : TreeManager<T, TK
 
         foreach (var treeInfo in allList.Where(x => x.ParentId.Equals(parentId)).ToList())
         {
-            var item = ObjectMapper.Map<TOutput, TWithChildsOuput>(treeInfo);
+            var item = await MapToWithChildsOuputAsync(treeInfo);
 
             if (isImportAllChilds)
             {
@@ -66,6 +100,39 @@ public class TreeManager<T, TKey, TOutput, TWithChildsOuput> : TreeManager<T, TK
         return list;
     }
 
+    protected virtual Task<TWithChildsOuput> MapToWithChildsOuputAsync(TOutput treeInfo)
+    {
+        if (treeInfo == null)
+        {
+            return Task.FromResult<TWithChildsOuput>(null);
+        }
+
+        if (ObjectMapper != null)
+        {
+            return Task.FromResult(ObjectMapper.Map<TOutput, TWithChildsOuput>(treeInfo));
+        }
+
+        if (Activator.CreateInstance(typeof(TWithChildsOuput)) is ITreeWithChildsInfo<TWithChildsOuput> item)
+        {
+            if (item is ITreeInfo<TKey> treeItem)
+            {
+                treeItem.Id = treeInfo.Id;
+                treeItem.ParentId = treeInfo.ParentId;
+                treeItem.Name = treeInfo.Name;
+                treeItem.Depth = treeInfo.Depth;
+                treeItem.FullPath = treeInfo.FullPath;
+                treeItem.FullPathName = treeInfo.FullPathName;
+                if (treeItem is TreeInfo<TKey> ti && treeInfo is TreeInfo<TKey> fromTi)
+                {
+                    ti.ChildrenCount = fromTi.ChildrenCount;
+                }
+            }
+            return Task.FromResult((TWithChildsOuput)item);
+        }
+
+        throw new AbpException($"No IObjectMapper registered and cannot map {typeof(TOutput).FullName} to {typeof(TWithChildsOuput).FullName}");
+    }
+
     public virtual async Task<List<TWithChildsOuput>> GetRootListAsync(List<TKey> idList)
     {
         var rootList = (await Repository.GetQueryableAsync())
@@ -73,7 +140,18 @@ public class TreeManager<T, TKey, TOutput, TWithChildsOuput> : TreeManager<T, TK
            .WhereIf(idList != null && idList.Any(), x => idList.Contains(x.Id))
            .ToList();
 
-        return ObjectMapper.Map<List<T>, List<TWithChildsOuput>>(rootList);
+        if (ObjectMapper != null)
+        {
+            return ObjectMapper.Map<List<T>, List<TWithChildsOuput>>(rootList);
+        }
+
+        var result = new List<TWithChildsOuput>();
+        foreach (var root in rootList)
+        {
+            var output = await MapToOuputAsync(root);
+            result.Add(await MapToWithChildsOuputAsync(output));
+        }
+        return result;
     }
 }
 
@@ -83,7 +161,7 @@ public class TreeManager<T, TKey, TOutput> : TreeManager<T, TKey>, ITreeManager<
     where TOutput : class, ITreeInfo<TKey>
 {
 
-    protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetRequiredService<IObjectMapper>();
+    protected IObjectMapper ObjectMapper => LazyServiceProvider.LazyGetService<IObjectMapper>();
     protected IDistributedCache<List<TOutput>> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<List<TOutput>>>();
     protected IDistributedCache<TOutput, TKey> ItemCache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<TOutput, TKey>>();
 
@@ -110,7 +188,7 @@ public class TreeManager<T, TKey, TOutput> : TreeManager<T, TKey>, ITreeManager<
 
             foreach (var item in list)
             {
-                result.Add(ObjectMapper.Map<T, TOutput>(item));
+                result.Add(await MapToOuputAsync(item));
             }
             return await Task.FromResult(result);
         });
@@ -128,7 +206,32 @@ public class TreeManager<T, TKey, TOutput> : TreeManager<T, TKey>, ITreeManager<
 
     protected virtual Task<TOutput> MapToOuputAsync(T entity)
     {
-        return Task.FromResult(ObjectMapper.Map<T, TOutput>(entity));
+        if (entity == null)
+        {
+            return Task.FromResult<TOutput>(null);
+        }
+
+        if (ObjectMapper != null)
+        {
+            return Task.FromResult(ObjectMapper.Map<T, TOutput>(entity));
+        }
+
+        if (Activator.CreateInstance(typeof(TOutput)) is ITreeInfo<TKey> info)
+        {
+            info.Id = entity.Id;
+            info.ParentId = entity.ParentId;
+            info.Name = entity.Name;
+            info.Depth = entity.Depth;
+            info.FullPath = entity.FullPath;
+            info.FullPathName = entity.FullPathName;
+            if (info is TreeInfo<TKey> ti)
+            {
+                ti.ChildrenCount = entity.ChildrenCount;
+            }
+            return Task.FromResult((TOutput)info);
+        }
+
+        throw new AbpException($"No IObjectMapper registered and cannot create instance of {typeof(TOutput).FullName}");
     }
 
     public virtual async Task<List<TOutput>> GetManyByCacheAsync(List<TKey> idList)
