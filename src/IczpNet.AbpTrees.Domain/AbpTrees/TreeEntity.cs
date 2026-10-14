@@ -1,4 +1,4 @@
-﻿using IczpNet.AbpTrees.Statics;
+using IczpNet.AbpTrees.Statics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -67,7 +67,7 @@ public abstract class TreeEntity<T, TKey> : FullAuditedAggregateRoot<TKey>, ITre
 
     public virtual int GetChildsCount()
     {
-        return Childs.Count();
+        return Childs?.Count() ?? ChildrenCount;
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public abstract class TreeEntity<T, TKey> : FullAuditedAggregateRoot<TKey>, ITre
     /// 子集合
     /// </summary>
     [InverseProperty(nameof(Parent))]
-    public virtual IEnumerable<T> Childs { get; protected set; }
+    public virtual IEnumerable<T> Childs { get; protected set; } = new List<T>();
 
     protected TreeEntity()
     {
@@ -139,6 +139,8 @@ public abstract class TreeEntity<T, TKey> : FullAuditedAggregateRoot<TKey>, ITre
     {
         if (parent == null)
         {
+            Parent = default;
+            SetParentId(null);
             SetDepth(0);
             SetFullPath(null);
             SetFullPathName(null);
@@ -146,6 +148,7 @@ public abstract class TreeEntity<T, TKey> : FullAuditedAggregateRoot<TKey>, ITre
         else
         {
             Parent = parent;
+            SetParentId(parent.Id);
             Assert.If(Parent.Depth >= AbpTreesConsts.MaxDepth, $"超出最大层级:{AbpTreesConsts.MaxDepth}");
             SetDepth(Parent.Depth + 1);
             SetFullPath(parent.FullPath);

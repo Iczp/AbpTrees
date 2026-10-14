@@ -394,7 +394,7 @@ public class TreeManager<T, TKey> : DomainService, ITreeManager<T, TKey>
 
         Assert.If(inputEntity.Name.Contains(inputEntity.GetSplitString()), $"[Name] cannot contains char:\"{inputEntity.GetSplitString()}\"");
 
-        Assert.NotNull(inputEntity.ParentId.Equals(inputEntity.Id), $"ParentId[{inputEntity.ParentId}] may cause infinite loop.");
+        Assert.If(newParentId.HasValue && newParentId.Value.Equals(inputEntity.Id), $"ParentId[{newParentId}] may cause infinite loop.");
 
         //var arr = entity.FullPath.Split(AbpTreesConsts.SplitPath);
 
@@ -406,10 +406,12 @@ public class TreeManager<T, TKey> : DomainService, ITreeManager<T, TKey>
 
         //entity.SetName(entity.Name);
 
+        var oldParentId = inputEntity.ParentId;
+
         if (newParentId.HasValue)
         {
             //变更上级
-            var parent = await Repository.GetAsync(inputEntity.ParentId.Value);
+            var parent = await Repository.GetAsync(newParentId.Value);
 
             Assert.NotNull(parent, $"[Parent] is no such.");
 
@@ -426,7 +428,7 @@ public class TreeManager<T, TKey> : DomainService, ITreeManager<T, TKey>
         await UnitOfWorkManager.Current.SaveChangesAsync();
 
         //update childrenCount
-        var idList = new List<TKey?>() { newParentId, inputEntity.ParentId, inputEntity.Id }
+        var idList = new List<TKey?>() { newParentId, oldParentId, inputEntity.ParentId, inputEntity.Id }
             .Where(x => x.HasValue)
             .Select(x => x.Value)
             .Distinct()
@@ -478,21 +480,26 @@ public class TreeManager<T, TKey> : DomainService, ITreeManager<T, TKey>
 
         TryToSetLastModificationTime(entity, Clock.Now);
 
-        foreach (var item in entity.Childs)
-        {
-            item.SetParent(entity);
+        var childs = await GetChildsAsync(entity.Id);
 
-            await ChangeChildsAsync(item);
+        if (childs != null)
+        {
+            foreach (var item in childs)
+            {
+                item.SetParent(entity);
+
+                await ChangeChildsAsync(item);
+            }
         }
     }
 
-    protected virtual Task CheckChildCountAsync(T entity)
+    protected virtual async Task CheckChildCountAsync(T entity)
     {
-        var childCount = entity.Childs.Count();
+        var childCount = entity.ChildrenCount > 0
+            ? entity.ChildrenCount
+            : (entity.Childs != null ? entity.Childs.Count() : await Repository.CountAsync(x => x.ParentId.Equals(entity.Id)));
 
         Assert.If(childCount > 0, $"Has ({childCount}) childs, cannot delete.");
-
-        return Task.CompletedTask;
     }
 
     public virtual async Task DeleteAsync(TKey id)
@@ -508,11 +515,11 @@ public class TreeManager<T, TKey> : DomainService, ITreeManager<T, TKey>
 
     public virtual async Task<List<T>> GetChildsAsync(TKey? entityId)
     {
-        //return await Repository.GetListAsync(x => x.ParentId == id);
-        return (await Repository.GetQueryableAsync())
+        var query = (await Repository.GetQueryableAsync())
             .Where(x => x.ParentId.Equals(entityId))
-            .OrderByDescending(x => x.Sorting)
-            .ToList();
+            .OrderByDescending(x => x.Sorting);
+
+        return await AsyncExecuter.ToListAsync(query);
     }
 
     public virtual async Task<int> RepairDataAsync(int maxResultCount = 100, int skinCount = 0, string sorting = null)
